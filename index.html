@@ -15,10 +15,6 @@
             height : 32px;            
             background-color: #FFFF00;
         }
-/*        #wallpaper-sample {
-            width:400;
-            height:400;
-        }*/
     </style>
 
 </head>
@@ -34,7 +30,7 @@
             <div class="row">
                 <div class='span1'></div>
                 <div class="span6">
-                    <canvas id='wallpaper-sample' width='320' height='320'></canvas>
+                    <canvas id='wallpaper-sample' width='320' height='320' class="img-polaroid"></canvas>
                 </div>
                 <div class='span1'></div>
             </div>
@@ -50,7 +46,7 @@
                                 <img id='kamon-type1' class='kamon-sample kamon-pick' src='img/kikyo.png' />
                             </td>
                             <td>
-                                <input type='text' class='span2 color-pick' value='#8fff00' />
+                                <input id='kamon-color1' type='text' class='span2 color-pick' value='#0F0F0F' />
                             </td>
                             <td>
                                 <select id='kamon-select-size' class='span2 kamon-edit'>
@@ -109,20 +105,22 @@
 <script src="js/bootstrap-colorpicker.js"></script>
 
 <script type='text/javascript'>
+    var currentColor = {};
     $('.kamon-pick').on('click',function(){
         $('#myModal').modal('show');
         $('#myModal').attr('called-id',$(this).attr('id'));
     });
     $('#myModal').on('show',function(event){
-        console.log(event);
+        // console.log(event);
     })
     $('.kamon-type').on('click',function(){
         $('#myModal').modal('hide');
         $('#'+$('#myModal').attr('called-id')).attr('src',$(this).attr('src'));
-        console.log(this);
     });
+
     $('.kamon-edit').on('change',function(e){
         drawKamonSample();
+        console.log('kamon-edit');
     });
 
     $('#btn-publish').on('click',function(){
@@ -136,29 +134,59 @@
         $('.color-pick').colorpicker().on('changeColor',function(ev){
             var color = ev.color.toHex();
             $(this).val(color).css('background-color',color);
+            changeKamonColor();
+            console.log('changed');
         });
         // initialize
         init();
     });
 
     function init() {
+        currentColor.red   = 15;
+        currentColor.green = 15;
+        currentColor.blue  = 15;
         drawKamonSample();
+        changeKamonColor();
+        console.log('init');
     }
 
     function drawKamonSample() {
+        console.log('drawn');
         var canvas = document.getElementById('wallpaper-sample');
         var ctx = canvas.getContext('2d');
         if(ctx) {
             // size define.
             var size = getKamonSize();
+            var canvas_w = $('#wallpaper-sample').attr('width');
+            var canvas_h = $('#wallpaper-sample').attr('height');
+
             // fill with kamon.
             fillKamon(
                 ctx,
                 $('#kamon-type1').attr('src'),
-                $('#wallpaper-sample').attr('width'),
-                $('#wallpaper-sample').attr('height'),
+                canvas_w,
+                canvas_h,
                 size);
         }                
+    }
+
+    function changeKamonColor() {
+        var canvas = document.getElementById('wallpaper-sample');
+        var ctx = canvas.getContext('2d');
+        if(ctx) {
+            // size define.
+            var size = getKamonSize();
+            var canvas_w = $('#wallpaper-sample').attr('width');
+            var canvas_h = $('#wallpaper-sample').attr('height');
+
+            // change color settings.
+            var color = parseColorParams($('#kamon-color1').val());
+            var repl = replaceColor(
+                ctx.getImageData(0,0,canvas_w,canvas_h),
+                color);
+            ctx.putImageData(repl,0,0);
+            setCurrentColor(color);
+        }                   
     }
 
     function getKamonSize() {
@@ -205,6 +233,59 @@
             ctx.drawImage(image,x,y,size.w,size.h);
         }
         image.src = src;
+    }
+
+    function replaceColor(imageData,color) {
+        var data = imageData.data;
+        for(var x = 0;x < 320;++x) {
+            for(var y = 0;y < 320;++y) {
+                var index = (x+y*320)*4;
+                var rgb = putColor(data,index,color);
+                data[index+0] = rgb[0];
+                data[index+1] = rgb[1];
+                data[index+2] = rgb[2];
+                data[index+3] = rgb[3];
+            }                
+        }
+        
+        imageData.data = data;
+        return imageData;
+    }
+
+    function putColor(data,index,color) {
+        var rgb = new Array(4);
+        if(data[index+0] == currentColor.red
+            && data[index+1] == currentColor.green
+            && data[index+2] == currentColor.blue
+            && data[index+3] == 255
+            ) {
+            rgb[0] = color.red;
+            rgb[1] = color.green;
+            rgb[2] = color.blue;
+            rgb[3] = 255;
+        } else {
+            rgb[0] = data[index+0];
+            rgb[1] = data[index+1];
+            rgb[2] = data[index+2];
+            rgb[3] = data[index+3];          
+        }
+
+        return rgb;
+    }
+
+    function parseColorParams(color) {
+        var rgb = {};
+        rgb.red   = parseInt(color.substr(1,2),16);
+        rgb.green = parseInt(color.substr(3,2),16);
+        rgb.blue  = parseInt(color.substr(5,2),16);
+
+        return rgb;
+    }
+
+    function setCurrentColor(color) {
+        currentColor.red   = color.red;
+        currentColor.green = color.green;
+        currentColor.blue  = color.blue;
     }
 
     function screenshot()
