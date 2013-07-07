@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Kamon Wallpaper Generator</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/colorpicker.css" rel="stylesheet">
+    <style>
+        .kamon-sample {
+            width : 32px;
+            height : 32px;
+        }
+        .selected-color {
+            width : 64px;
+            height : 32px;            
+            background-color: #FFFF00;
+        }
+/*        #wallpaper-sample {
+            width:400;
+            height:400;
+        }*/
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class='span2'></div>
+        <div class="span8">
+             <div class="row">
+                <div class="span8"><h1>Kamon Wakkpaper Generator.</h1></div>
+            </div>
+            <div class="row">
+                <div class='span1'></div>
+                <div class="span6">
+                    <canvas id='wallpaper-sample' width='320' height='320'></canvas>
+                </div>
+                <div class='span1'></div>
+            </div>
+            <div class="row">
+                <div class="span6 text-right">
+                    <h2>Choose kamon style.</h2>
+                    <table class='table'>
+                        <tr>
+                            <th>type</th><th>color</th><th>size</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img id='kamon-type1' class='kamon-sample kamon-pick' src='img/kikyo.png' />
+                            </td>
+                            <td>
+                                <input type='text' class='span2 color-pick' value='#8fff00' />
+                            </td>
+                            <td>
+                                <select id='kamon-select-size' class='span2 kamon-edit'>
+                                    <option value='1'>Small</option>
+                                    <option value='2'>Medium</option>
+                                    <option value='3'>Large</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class='span2'></div>
+            </div>
+            <div class="row">
+                <div class="span6">
+                    background-color:
+                    <input type='text' class='span2 color-pick' />
+                </div>
+            </div>
+            <div class="row">
+                <div class="span3">
+                    width:
+                    <input type='text' id='text-wallpaper-width' class='span1' />
+                </div>
+                <div class="span3">
+                    height:
+                    <input type='text' id='text-wallpaper-height' class='span1' />
+                </div>
+            </div>
+            <div class="row">
+                <div class="span6 text-right">
+                    <button id='btn-preview' class='btn btn-info'>preview</button>
+                    <button id='btn-publish' class='btn btn-primary'>publish</button>
+                </div>
+                <div class='span2'></div>
+            </div>
+        </div>
+        <div class='span2'></div>
+    </div>
+</div>
+
+<div id='myModal' class='modal hide fade' called-id='#'>
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal">&times;</a>
+        <h3>Choose your favorite.</h3>
+    </div>
+    <div class="modal-body">
+        <img src='img/kikyo.png'     class="kamon-type kamon-sample"/>
+        <img src='img/ageha-mon.png' class="kamon-type kamon-sample"/>
+    <div class="modal-footer">
+    </div>                                    
+</div>
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-colorpicker.js"></script>
+
+<script type='text/javascript'>
+    $('.kamon-pick').on('click',function(){
+        $('#myModal').modal('show');
+        $('#myModal').attr('called-id',$(this).attr('id'));
+    });
+    $('#myModal').on('show',function(event){
+        console.log(event);
+    })
+    $('.kamon-type').on('click',function(){
+        $('#myModal').modal('hide');
+        $('#'+$('#myModal').attr('called-id')).attr('src',$(this).attr('src'));
+        console.log(this);
+    });
+    $('.kamon-edit').on('change',function(e){
+        drawKamonSample();
+    });
+
+    $('#btn-publish').on('click',function(){
+        screenshot();
+    });
+
+    $(function(){
+        $('.color-pick').colorpicker({
+            format:'hex'
+        })
+        $('.color-pick').colorpicker().on('changeColor',function(ev){
+            var color = ev.color.toHex();
+            $(this).val(color).css('background-color',color);
+        });
+        // initialize
+        init();
+    });
+
+    function init() {
+        drawKamonSample();
+    }
+
+    function drawKamonSample() {
+        var canvas = document.getElementById('wallpaper-sample');
+        var ctx = canvas.getContext('2d');
+        if(ctx) {
+            // size define.
+            var size = getKamonSize();
+            // fill with kamon.
+            fillKamon(
+                ctx,
+                $('#kamon-type1').attr('src'),
+                $('#wallpaper-sample').attr('width'),
+                $('#wallpaper-sample').attr('height'),
+                size);
+        }                
+    }
+
+    function getKamonSize() {
+        var size = {};
+        var selected = parseInt($('#kamon-select-size').val());
+        switch(selected) {
+            case 1:
+                size.w = 40;
+                size.h = 40;
+                break;        
+            case 2:
+                size.w = 80;
+                size.h = 80;
+                break;        
+            case 3:
+                size.w = 160;
+                size.h = 160;
+                break;        
+        }
+        return size;
+    }
+
+    function fillKamon(ctx,src,canvas_w,canvas_h,size) {
+        // calulate draw number.
+        var times_v = Math.ceil(canvas_w / size.w);
+        var times_h = Math.ceil(canvas_h / size.h);
+
+        // put images.
+        var posX = 0;
+        var posY = 0;
+        for (var i = 0; i < times_v; i++) {
+            for (var j = 0; j < times_h; j++) {
+                putImage(ctx,src,posX,posY,size);       
+                posX += size.w;
+            }
+            posX = 0;
+            posY += size.h;
+        }
+    }
+
+    function putImage(ctx,src,x,y,size) {
+        var image = new Image();
+        image.onload = function() {
+            ctx.drawImage(image,x,y,size.w,size.h);
+        }
+        image.src = src;
+    }
+
+    function screenshot()
+    {
+        var canvas = document.getElementById("wallpaper-sample");
+        var base64 = canvas.toDataURL();    // firfoxならtoblobで直接blobにして保存できます。
+        var blob = base64toBlob(base64);
+        saveBlob(blob,"default.png");
+    }
+
+    /**
+    saveBlob
+    param0:blob blobオブジェクト
+    param1:string デフォルトのダウンロードファイル名
+
+    @support (たぶん)
+        Chrome 8+
+        Firefox(Gecko) 4+
+        Internet Explorer 10+
+        Opera 12+
+        Safari(WebKit) Nightly build
+    **/
+    function saveBlob(_blob,_file)
+    {
+        if( /*@cc_on ! @*/ false )
+        {   // IEの場合
+            window.navigator.msSaveBlob(_blob, _file);
+        }
+        else    
+        {
+            var url = (window.URL || window.webkitURL);
+            var data = url.createObjectURL(_blob);
+            var e = document.createEvent("MouseEvents");
+            e.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+            a.href = data;
+            a.download = _file;   
+            a.dispatchEvent(e);
+        }
+    }
+    /*
+    base64toBlob
+    return:blob blobオブジェクト
+    param0:string base64エンコーディングされた文字列
+
+    support(たぶん)
+        Chrome 7+
+        Firefox(Gecko)4(2)+
+        Internet Explorer 10+
+        Opera 11.6+
+        Safari 5.1+
+    */
+    function base64toBlob(_base64)
+    {
+        var i;
+        var tmp = _base64.split(',');
+        var data = atob(tmp[1]);
+        var mime = tmp[0].split(':')[1].split(';')[0];
+        var buff = new ArrayBuffer(data.length);
+        var arr = new Uint8Array(buff);
+        for (i = 0; i < data.length; i++) {arr[i] = data.charCodeAt(i);}
+        var blob = new Blob([arr], { type: mime });
+        return blob;
+    }
+
+</script>
+
+</body>
+</html>
