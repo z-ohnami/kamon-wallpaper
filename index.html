@@ -25,7 +25,7 @@
         <div class='span2'></div>
         <div class="span8">
              <div class="row">
-                <div class="span8"><h1>Kamon Wakkpaper Generator.</h1></div>
+                <div class="span8"><h1>Kamon Wallpaper Generator.</h1></div>
             </div>
             <div class="row">
                 <div class='span1'></div>
@@ -63,7 +63,7 @@
             <div class="row">
                 <div class="span6">
                     background-color:
-                    <input type='text' class='span2 color-pick' />
+                    <input id='background-color' type='text' class='span2 color-pick' />
                 </div>
             </div>
             <div class="row">
@@ -105,55 +105,73 @@
 <script src="js/bootstrap-colorpicker.js"></script>
 
 <script type='text/javascript'>
-    var currentColor = {};
+    var currentKamonColor = {};
+    var currentBGColor = {};
     $('.kamon-pick').on('click',function(){
         $('#myModal').modal('show');
         $('#myModal').attr('called-id',$(this).attr('id'));
     });
-    $('#myModal').on('show',function(event){
-        // console.log(event);
-    })
+
     $('.kamon-type').on('click',function(){
         $('#myModal').modal('hide');
         $('#'+$('#myModal').attr('called-id')).attr('src',$(this).attr('src'));
+        drawKamonSample();
     });
 
     $('.kamon-edit').on('change',function(e){
         drawKamonSample();
-        console.log('kamon-edit');
     });
 
     $('#btn-publish').on('click',function(){
         screenshot();
     });
 
+    $('#btn-preview').on('click',function(){
+        setBackgroundImage();
+    });
+
+    $('.color-pick').colorpicker({
+        format:'hex'
+    })
+    $('.color-pick').colorpicker().on('changeColor',function(ev){
+        var color = ev.color.toHex();
+        $(this).val(color).css('background-color',color);
+        var newColor = parseColorParams($(this).val());
+        if($(this).attr('id') == 'background-color') {
+            changeColor(currentBGColor,newColor);
+        } else {
+            changeColor(currentKamonColor,newColor);
+        }
+    });
+
     $(function(){
-        $('.color-pick').colorpicker({
-            format:'hex'
-        })
-        $('.color-pick').colorpicker().on('changeColor',function(ev){
-            var color = ev.color.toHex();
-            $(this).val(color).css('background-color',color);
-            changeKamonColor();
-            console.log('changed');
-        });
         // initialize
         init();
     });
 
     function init() {
-        currentColor.red   = 15;
-        currentColor.green = 15;
-        currentColor.blue  = 15;
+        initColor();
         drawKamonSample();
-        changeKamonColor();
-        console.log('init');
+//        changeColor(currentColor);
+    }
+
+    function initColor() {
+        currentKamonColor.red   = 15;
+        currentKamonColor.green = 15;
+        currentKamonColor.blue  = 15;
+
+        currentBGColor.red   = 255;
+        currentBGColor.green = 255;
+        currentBGColor.blue  = 255;        
+    }
+
+    function getCanvasContext() {
+        var canvas = document.getElementById('wallpaper-sample');
+        return canvas.getContext('2d');        
     }
 
     function drawKamonSample() {
-        console.log('drawn');
-        var canvas = document.getElementById('wallpaper-sample');
-        var ctx = canvas.getContext('2d');
+        var ctx = getCanvasContext();
         if(ctx) {
             // size define.
             var size = getKamonSize();
@@ -170,9 +188,8 @@
         }                
     }
 
-    function changeKamonColor() {
-        var canvas = document.getElementById('wallpaper-sample');
-        var ctx = canvas.getContext('2d');
+    function changeColor(currentColor,newColor) {
+        var ctx = getCanvasContext();
         if(ctx) {
             // size define.
             var size = getKamonSize();
@@ -180,12 +197,14 @@
             var canvas_h = $('#wallpaper-sample').attr('height');
 
             // change color settings.
-            var color = parseColorParams($('#kamon-color1').val());
             var repl = replaceColor(
                 ctx.getImageData(0,0,canvas_w,canvas_h),
-                color);
+                canvas_w,
+                canvas_h,
+                currentColor,
+                newColor);
             ctx.putImageData(repl,0,0);
-            setCurrentColor(color);
+            setCurrentColor(currentColor,newColor);
         }                   
     }
 
@@ -235,33 +254,33 @@
         image.src = src;
     }
 
-    function replaceColor(imageData,color) {
+    function replaceColor(imageData,canvas_w,canvas_h,currentColor,newColor) {
         var data = imageData.data;
-        for(var x = 0;x < 320;++x) {
-            for(var y = 0;y < 320;++y) {
-                var index = (x+y*320)*4;
-                var rgb = putColor(data,index,color);
+        for(var x = 0;x < canvas_w;++x) {
+            for(var y = 0;y < canvas_h;++y) {
+                var index = (x + (y * canvas_h)) * 4;
+                var rgb = putColor(data,index,currentColor,newColor);
                 data[index+0] = rgb[0];
                 data[index+1] = rgb[1];
                 data[index+2] = rgb[2];
                 data[index+3] = rgb[3];
             }                
         }
-        
+
         imageData.data = data;
         return imageData;
     }
 
-    function putColor(data,index,color) {
+    function putColor(data,index,currentColor,newColor) {
         var rgb = new Array(4);
         if(data[index+0] == currentColor.red
             && data[index+1] == currentColor.green
             && data[index+2] == currentColor.blue
             && data[index+3] == 255
             ) {
-            rgb[0] = color.red;
-            rgb[1] = color.green;
-            rgb[2] = color.blue;
+            rgb[0] = newColor.red;
+            rgb[1] = newColor.green;
+            rgb[2] = newColor.blue;
             rgb[3] = 255;
         } else {
             rgb[0] = data[index+0];
@@ -282,18 +301,40 @@
         return rgb;
     }
 
-    function setCurrentColor(color) {
-        currentColor.red   = color.red;
-        currentColor.green = color.green;
-        currentColor.blue  = color.blue;
+    function setCurrentColor(currentColor,newColor) {
+        if(currentColor.red == currentKamonColor.red
+            && currentColor.green == currentKamonColor.green
+            && currentColor.blue == currentKamonColor.blue
+            ) {
+            currentKamonColor.red   = newColor.red;
+            currentKamonColor.green = newColor.green;
+            currentKamonColor.blue  = newColor.blue;
+        } else {
+            currentBGColor.red   = newColor.red;
+            currentBGColor.green = newColor.green;
+            currentBGColor.blue  = newColor.blue;            
+        }
+    }
+
+    function canvasToBlob() {
+        var canvas = document.getElementById("wallpaper-sample");
+        var base64 = canvas.toDataURL();
+        // firfoxならtoblobで直接blobにして保存できます。
+        return base64toBlob(base64);        
     }
 
     function screenshot()
     {
-        var canvas = document.getElementById("wallpaper-sample");
-        var base64 = canvas.toDataURL();    // firfoxならtoblobで直接blobにして保存できます。
-        var blob = base64toBlob(base64);
+        var blob = canvasToBlob();
         saveBlob(blob,"default.png");
+    }
+
+    function setBackgroundImage() {
+        var blob = canvasToBlob();
+        var url = (window.URL || window.webkitURL);
+        var data = url.createObjectURL(blob);
+
+        $('body').css('background-image','url('+data+')');
     }
 
     /**
