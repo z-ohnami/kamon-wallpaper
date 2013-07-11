@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang='ja'>
 <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <title>Kamon Wallpaper Generator</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/colorpicker.css" rel="stylesheet">
+    <link href='css/lib/bootstrap.min.css' rel='stylesheet'>
+    <link href='css/lib/colorpicker.css' rel='stylesheet'>
     <style>
         .kamon-sample {
             width : 32px;
@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class='container'>
     <div class="row">
         <div class='span2'></div>
         <div class="span8">
@@ -43,7 +43,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <img id='kamon-type1' class='kamon-sample kamon-pick' src='img/kikyo.png' />
+                                <img id='kamon-type1' class='kamon-sample kamon-pick' src='img/kamon/kikyo.png' />
                             </td>
                             <td>
                                 <input id='kamon-color1' type='text' class='span2 color-pick' value='#0F0F0F' />
@@ -94,15 +94,15 @@
         <h3>Choose your favorite.</h3>
     </div>
     <div class="modal-body">
-        <img src='img/kikyo.png'     class="kamon-type kamon-sample"/>
-        <img src='img/ageha-mon.png' class="kamon-type kamon-sample"/>
+        <img src='img/kamon/kikyo.png'     class="kamon-type kamon-sample"/>
+        <img src='img/kamon/ageha-mon.png' class="kamon-type kamon-sample"/>
     <div class="modal-footer">
     </div>                                    
 </div>
 
 <script src='http://code.jquery.com/jquery-1.10.2.min.js'></script>
-<script src='js/bootstrap.min.js'></script>
-<script src='js/bootstrap-colorpicker.js'></script>
+<script src='js/lib/bootstrap.min.js'></script>
+<script src='js/lib/bootstrap-colorpicker.js'></script>
 <script src='js/blob.js'></script>
 
 <script type='text/javascript'>
@@ -153,7 +153,6 @@
     function init() {
         initColor();
         drawKamonSample();
-//        changeColor(currentColor);
     }
 
     function initColor() {
