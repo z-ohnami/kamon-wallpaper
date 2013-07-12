@@ -320,12 +320,12 @@
 
     function screenshot()
     {
-        var blob = canvasToBlob(document.getElementById("wallpaper-sample"));
-        saveBlob(blob,"default.png");
+        var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
+        saveBlob(blob,'kamon-wallpaper.png');
     }
 
     function setBackgroundImage() {
-        var blob = canvasToBlob(document.getElementById("wallpaper-sample"));
+        var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
         var url = (window.URL || window.webkitURL);
         var data = url.createObjectURL(blob);
 
