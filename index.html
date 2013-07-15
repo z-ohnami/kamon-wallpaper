@@ -17,6 +17,17 @@
         }
     </style>
 
+    <script type='text/template' id='kamon-select-template'>
+        <td>
+            <img id='kamon-type<%- id %>' class='kamon-sample kamon-pick' src='img/kamon/<%- fileName %>' />
+            <!-- <canvas id='kamon-canvas<%- id %>'></canvas> -->
+            <canvas id='kamon-canvas<%- id %>' style='display:none'></canvas>
+        </td>
+        <td>
+            <input id='kamon-color<%- id %>' type='text' class='span2 color-pick' value='<%- colorText %>' />
+        </td>
+    </script>
+
 </head>
 <body>
 
@@ -27,57 +38,50 @@
              <div class='row'>
                 <div class='span8'><h1>Kamon Wallpaper Generator.</h1></div>
             </div>
-            <div class="row">
+            <div class='row'>
                 <div class='span1'></div>
-                <div class="span6">
-                    <canvas id='wallpaper-sample' width='320' height='320' class="img-polaroid"></canvas>
+                <div class='span6'>
+                    <canvas id='wallpaper-sample' width='320' height='320' class='img-polaroid'></canvas>
                 </div>
                 <div class='span1'></div>
             </div>
-            <div class="row">
-                <div class="span6 text-right">
+            <div class='row'>
+                <div class='span6 text-right'>
                     <h2>Choose kamon style.</h2>
-                    <table class='table'>
+                    <table id='kamon-select-table' class='table'>
                         <tr>
-                            <th>type</th><th>color</th><th>size</th>
+                            <th>type</th><th>color</th>
                         </tr>
-                        <tr>
-                            <td>
-                                <img id='kamon-type1' class='kamon-sample kamon-pick' src='img/kamon/kikyo.png' />
-                            </td>
-                            <td>
-                                <input id='kamon-color1' type='text' class='span2 color-pick' value='#0F0F0F' />
-                            </td>
-                            <td>
-                                <select id='kamon-select-size' class='span2 kamon-edit'>
-                                    <option value='1'>Small</option>
-                                    <option value='2'>Medium</option>
-                                    <option value='3'>Large</option>
-                                </select>
-                            </td>
-                        </tr>
+                        <!-- set kamon select -->
                     </table>
                 </div>
                 <div class='span2'></div>
             </div>
-            <div class="row">
-                <div class="span6">
+            <div class='row'>
+                <div class='span6'>
                     background-color:
                     <input id='background-color' type='text' class='span2 color-pick' />
                 </div>
             </div>
-            <div class="row">
-                <div class="span3">
+            <div class='row'>
+                <div class='span2'>
                     width:
                     <input type='text' id='text-wallpaper-width' class='span1' />
                 </div>
-                <div class="span3">
+                <div class='span2'>
                     height:
                     <input type='text' id='text-wallpaper-height' class='span1' />
                 </div>
+                <div class='span2'>
+                    <select id='kamon-select-size' class='span2 kamon-edit'>
+                        <option value='1'>Small</option>
+                        <option value='2'>Medium</option>
+                        <option value='3'>Large</option>
+                    </select>
+                </div>
             </div>
-            <div class="row">
-                <div class="span6 text-right">
+            <div class='row'>
+                <div class='span6 text-right'>
                     <button id='btn-preview' class='btn btn-info'>preview</button>
                     <button id='btn-publish' class='btn btn-primary'>publish</button>
                 </div>
@@ -89,14 +93,14 @@
 </div>
 
 <div id='myModal' class='modal hide fade' called-id='#'>
-    <div class="modal-header">
-        <a href="#" class="close" data-dismiss="modal">&times;</a>
+    <div class='modal-header'>
+        <a href='#' class='close' data-dismiss='modal'>&times;</a>
         <h3>Choose your favorite.</h3>
     </div>
-    <div class="modal-body">
-        <img src='img/kamon/kikyo.png'     class="kamon-type kamon-sample"/>
-        <img src='img/kamon/ageha-mon.png' class="kamon-type kamon-sample"/>
-    <div class="modal-footer">
+    <div class='modal-body'>
+        <img src='img/kamon/kikyo.png'     class='kamon-type kamon-sample'/>
+        <img src='img/kamon/ageha-mon.png' class='kamon-type kamon-sample'/>
+    <div class='modal-footer'>
     </div>                                    
 </div>
 
@@ -106,233 +110,7 @@
 <script src='js/lib/underscore-min.js'></script>
 <script src='js/lib/backbone-min.js'></script>
 <script src='js/blob.js'></script>
-
-<script type='text/javascript'>
-    var currentKamonColor = {};
-    var currentBGColor = {};
-    $('.kamon-pick').on('click',function(){
-        $('#myModal').modal('show');
-        $('#myModal').attr('called-id',$(this).attr('id'));
-    });
-
-    $('.kamon-type').on('click',function(){
-        $('#myModal').modal('hide');
-        $('#'+$('#myModal').attr('called-id')).attr('src',$(this).attr('src'));
-        drawKamonSample();
-    });
-
-    $('.kamon-edit').on('change',function(e){
-        drawKamonSample();
-    });
-
-    $('#btn-publish').on('click',function(){
-        screenshot();
-    });
-
-    $('#btn-preview').on('click',function(){
-        setBackgroundImage();
-    });
-
-    $('.color-pick').colorpicker({
-        format:'hex'
-    })
-    $('.color-pick').colorpicker().on('changeColor',function(ev){
-        var color = ev.color.toHex();
-        $(this).val(color).css('background-color',color);
-        var newColor = parseColorParams($(this).val());
-        if($(this).attr('id') == 'background-color') {
-            changeColor(currentBGColor,newColor);
-        } else {
-            changeColor(currentKamonColor,newColor);
-        }
-    });
-
-    $(function(){
-        // initialize
-        init();
-    });
-
-    function init() {
-        initColor();
-        drawKamonSample();
-    }
-
-    function initColor() {
-        currentKamonColor.red   = 15;
-        currentKamonColor.green = 15;
-        currentKamonColor.blue  = 15;
-
-        currentBGColor.red   = 255;
-        currentBGColor.green = 255;
-        currentBGColor.blue  = 255;        
-    }
-
-    function getCanvasContext() {
-        var canvas = document.getElementById('wallpaper-sample');
-        return canvas.getContext('2d');        
-    }
-
-    function drawKamonSample() {
-        var ctx = getCanvasContext();
-        if(ctx) {
-            // size define.
-            var size = getKamonSize();
-            var canvas_w = $('#wallpaper-sample').attr('width');
-            var canvas_h = $('#wallpaper-sample').attr('height');
-
-            // fill with kamon.
-            fillKamon(
-                ctx,
-                $('#kamon-type1').attr('src'),
-                canvas_w,
-                canvas_h,
-                size);
-        }                
-    }
-
-    function changeColor(currentColor,newColor) {
-        var ctx = getCanvasContext();
-        if(ctx) {
-            // size define.
-            var size = getKamonSize();
-            var canvas_w = $('#wallpaper-sample').attr('width');
-            var canvas_h = $('#wallpaper-sample').attr('height');
-
-            // change color settings.
-            var repl = replaceColor(
-                ctx.getImageData(0,0,canvas_w,canvas_h),
-                canvas_w,
-                canvas_h,
-                currentColor,
-                newColor);
-            ctx.putImageData(repl,0,0);
-            setCurrentColor(currentColor,newColor);
-        }                   
-    }
-
-    function getKamonSize() {
-        var size = {};
-        var selected = parseInt($('#kamon-select-size').val());
-        switch(selected) {
-            case 1:
-                size.w = 40;
-                size.h = 40;
-                break;        
-            case 2:
-                size.w = 80;
-                size.h = 80;
-                break;        
-            case 3:
-                size.w = 160;
-                size.h = 160;
-                break;        
-        }
-        return size;
-    }
-
-    function fillKamon(ctx,src,canvas_w,canvas_h,size) {
-        // calulate draw number.
-        var times_v = Math.ceil(canvas_w / size.w);
-        var times_h = Math.ceil(canvas_h / size.h);
-
-        // put images.
-        var posX = 0;
-        var posY = 0;
-        for (var i = 0; i < times_v; i++) {
-            for (var j = 0; j < times_h; j++) {
-                putImage(ctx,src,posX,posY,size);       
-                posX += size.w;
-            }
-            posX = 0;
-            posY += size.h;
-        }
-    }
-
-    function putImage(ctx,src,x,y,size) {
-        var image = new Image();
-        image.onload = function() {
-            ctx.drawImage(image,x,y,size.w,size.h);
-        }
-        image.src = src;
-    }
-
-    function replaceColor(imageData,canvas_w,canvas_h,currentColor,newColor) {
-        var data = imageData.data;
-        for(var x = 0;x < canvas_w;++x) {
-            for(var y = 0;y < canvas_h;++y) {
-                var index = (x + (y * canvas_h)) * 4;
-                var rgb = putColor(data,index,currentColor,newColor);
-                data[index+0] = rgb[0];
-                data[index+1] = rgb[1];
-                data[index+2] = rgb[2];
-                data[index+3] = rgb[3];
-            }                
-        }
-
-        imageData.data = data;
-        return imageData;
-    }
-
-    function putColor(data,index,currentColor,newColor) {
-        var rgb = new Array(4);
-        if(data[index+0] == currentColor.red
-            && data[index+1] == currentColor.green
-            && data[index+2] == currentColor.blue
-            && data[index+3] == 255
-            ) {
-            rgb[0] = newColor.red;
-            rgb[1] = newColor.green;
-            rgb[2] = newColor.blue;
-            rgb[3] = 255;
-        } else {
-            rgb[0] = data[index+0];
-            rgb[1] = data[index+1];
-            rgb[2] = data[index+2];
-            rgb[3] = data[index+3];          
-        }
-
-        return rgb;
-    }
-
-    function parseColorParams(color) {
-        var rgb = {};
-        rgb.red   = parseInt(color.substr(1,2),16);
-        rgb.green = parseInt(color.substr(3,2),16);
-        rgb.blue  = parseInt(color.substr(5,2),16);
-
-        return rgb;
-    }
-
-    function setCurrentColor(currentColor,newColor) {
-        if(currentColor.red == currentKamonColor.red
-            && currentColor.green == currentKamonColor.green
-            && currentColor.blue == currentKamonColor.blue
-            ) {
-            currentKamonColor.red   = newColor.red;
-            currentKamonColor.green = newColor.green;
-            currentKamonColor.blue  = newColor.blue;
-        } else {
-            currentBGColor.red   = newColor.red;
-            currentBGColor.green = newColor.green;
-            currentBGColor.blue  = newColor.blue;            
-        }
-    }
-
-    function screenshot()
-    {
-        var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
-        saveBlob(blob,'kamon-wallpaper.png');
-    }
-
-    function setBackgroundImage() {
-        var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
-        var url = (window.URL || window.webkitURL);
-        var data = url.createObjectURL(blob);
-
-        $('body').css('background-image','url('+data+')');
-    }
-
-</script>
-
+<script src='js/class.js'></script>
+<script src='js/app.js'></script>
 </body>
 </html>
