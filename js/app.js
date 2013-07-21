@@ -42,20 +42,22 @@
 
   $(function(){
     // initialize application
-    init();
+    var appView = new MainView();
+    appView.render();
+//    init();
   });
 
   function init() {
 //        initColor();
-    var kamonCollection = new KamonCollection([
-      {id:1,fileName:'kikyo.png',colorText:'#0F0F0F'},
-      {id:2,fileName:'ageha-mon.png',colorText:'#0F0F0F'},
-      {id:3,fileName:'futa-ba-rindo.png',colorText:'#0F0F0F'},
-      {id:4,fileName:'mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
-    ]);
+    // var kamonCollection = new KamonCollection([
+    //   {id:1,fileName:'kikyo.png',colorText:'#0F0F0F'},
+    //   {id:2,fileName:'ageha-mon.png',colorText:'#0F0F0F'},
+    //   {id:3,fileName:'futa-ba-rindo.png',colorText:'#0F0F0F'},
+    //   {id:4,fileName:'mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
+    // ]);
 
-    var kamonCollectionView = new KamonCollectionView({collection:kamonCollection});
-    kamonCollectionView.render();
+    // var kamonCollectionView = new KamonCollectionView({collection:kamonCollection});
+    // kamonCollectionView.render();
 
     var currentKamonColor = new Color();
     var currentBGColor = new Color({currentRed:255,currentGreen:255,currentBlue:255});
@@ -76,29 +78,29 @@
     //     currentBGColor.blue  = 255;        
     // }
 
-  function getCanvasContext() {
-      var canvas = document.getElementById('wallpaper-sample');
-      return canvas.getContext('2d');
-  }
+  // function getCanvasContext() {
+  //     var canvas = document.getElementById('wallpaper-sample');
+  //     return canvas.getContext('2d');
+  // }
 
-  function drawKamonSample(kamonCollection) {
-    var ctx = getCanvasContext();
-    if(ctx) {
-      // size define.
-      var size = getKamonSize();
-      var canvas_w = $('#wallpaper-sample').attr('width');
-      var canvas_h = $('#wallpaper-sample').attr('height');
+  // function drawKamonSample(kamonCollection) {
+  //   var ctx = getCanvasContext();
+  //   if(ctx) {
+  //     // size define.
+  //     var size = getKamonSize();
+  //     var canvas_w = $('#wallpaper-sample').attr('width');
+  //     var canvas_h = $('#wallpaper-sample').attr('height');
 
-      // fill with kamon.
-      fillKamon(
-        ctx,
-        // $('#kamon-type1').attr('src'),
-        kamonCollection,
-        canvas_w,
-        canvas_h,
-        size);
-    }
-  }
+  //     // fill with kamon.
+  //     fillKamon(
+  //       ctx,
+  //       // $('#kamon-type1').attr('src'),
+  //       kamonCollection,
+  //       canvas_w,
+  //       canvas_h,
+  //       size);
+  //   }
+  // }
 
   function changeColor(currentColor,newColor) {
     var ctx = getCanvasContext();
@@ -120,57 +122,57 @@
     }
   }
 
-  function getKamonSize() {
-    var size = {};
-    var selected = parseInt($('#kamon-select-size').val());
-    switch(selected) {
-      case 1:
-        size.w = 40;
-        size.h = 40;
-        break;
-      case 2:
-        size.w = 80;
-        size.h = 80;
-        break;
-      case 3:
-        size.w = 160;
-        size.h = 160;
-        break;
-    }
-    return size;
-  }
+  // function getKamonSize() {
+  //   var size = {};
+  //   var selected = parseInt($('#kamon-select-size').val());
+  //   switch(selected) {
+  //     case 1:
+  //       size.w = 40;
+  //       size.h = 40;
+  //       break;
+  //     case 2:
+  //       size.w = 80;
+  //       size.h = 80;
+  //       break;
+  //     case 3:
+  //       size.w = 160;
+  //       size.h = 160;
+  //       break;
+  //   }
+  //   return size;
+  // }
 
-  function fillKamon(ctx,kamonCollection,canvas_w,canvas_h,size) {
-    // calulate drawing times.
-    var times_v = Math.ceil(canvas_w / size.w);
-    var times_h = Math.ceil(canvas_h / size.h);
+  // function fillKamon(ctx,kamonCollection,canvas_w,canvas_h,size) {
+  //   // calulate drawing times.
+  //   var times_v = Math.ceil(canvas_w / size.w);
+  //   var times_h = Math.ceil(canvas_h / size.h);
 
-    // put images.
-    var posX = 0;
-    var posY = 0;
-    var kamonTotal = kamonCollection.length;
-    var kamonImageArray = [];
-    for (var i = 0; i < kamonTotal; i++) {
-      var id = kamonCollection.models[i].id;
-      var kamonCanvas = document.getElementById('kamon-canvas'+id);
-      var kamonCtx = kamonCanvas.getContext('2d');
-      kamonImageArray.push(kamonCtx);
-    }
+  //   // put images.
+  //   var posX = 0;
+  //   var posY = 0;
+  //   var kamonTotal = kamonCollection.length;
+  //   var kamonImageArray = [];
+  //   for (var i = 0; i < kamonTotal; i++) {
+  //     var id = kamonCollection.models[i].id;
+  //     var kamonCanvas = document.getElementById('kamon-canvas'+id);
+  //     var kamonCtx = kamonCanvas.getContext('2d');
+  //     kamonImageArray.push(kamonCtx);
+  //   }
 
-    var kamonCnt = 0;
-    for (i = 0; i < times_v; i++) {
-      for (var j = 0; j < times_h; j++) {
-        var image = kamonImageArray[(kamonCnt % kamonTotal)].getImageData(0,0,size.w,size.h);
-        putImage(ctx,image,posX,posY,size);
-        posX += size.w;
-        kamonCnt++;
-        if(kamonCnt >= kamonTotal )
-          kamonCnt = 0;
-      }
-      posX = 0;
-      posY += size.h;
-    }
-  }
+  //   var kamonCnt = 0;
+  //   for (i = 0; i < times_v; i++) {
+  //     for (var j = 0; j < times_h; j++) {
+  //       var image = kamonImageArray[(kamonCnt % kamonTotal)].getImageData(0,0,size.w,size.h);
+  //       putImage(ctx,image,posX,posY,size);
+  //       posX += size.w;
+  //       kamonCnt++;
+  //       if(kamonCnt >= kamonTotal )
+  //         kamonCnt = 0;
+  //     }
+  //     posX = 0;
+  //     posY += size.h;
+  //   }
+  // }
 
   function putImage(ctx,image,x,y,size) {
     ctx.putImageData(image,x,y);
