@@ -11,9 +11,9 @@
       drawKamonSample();
   });
 
-  $('.kamon-edit').on('change',function(e){
-      drawKamonSample();
-  });
+  // $('.kamon-edit').on('change',function(e){
+  //     drawKamonSample();
+  // });
 
   $('#btn-publish').on('click',function(){
       screenshot();
@@ -23,22 +23,22 @@
       setBackgroundImage();
   });
 
-  $('.color-pick').colorpicker({
-      format:'hex'
-  });
+  // $('.color-pick').colorpicker({
+  //     format:'hex'
+  // });
 
-  $('.color-pick').colorpicker().on('changeColor',function(ev){
-      var color = ev.color.toHex();
-      $(this).val(color).css('background-color',color);
-      var newColor = parseColorParams($(this).val());
-      if($(this).attr('id') == 'background-color') {
-          currentBGColor.change(newColor);
-//            changeColor(currentBGColor,newColor);
-      } else {
-          currentKamonColor.change(newColor);
-//            changeColor(currentKamonColor,newColor);
-      }
-  });
+//   $('.color-pick').colorpicker().on('changeColor',function(ev){
+//       var color = ev.color.toHex();
+//       $(this).val(color).css('background-color',color);
+//       var newColor = parseColorParams($(this).val());
+//       if($(this).attr('id') == 'background-color') {
+//           currentBGColor.change(newColor);
+// //            changeColor(currentBGColor,newColor);
+//       } else {
+//           currentKamonColor.change(newColor);
+// //            changeColor(currentKamonColor,newColor);
+//       }
+//   });
 
   $(function(){
     // initialize application
@@ -47,7 +47,7 @@
 //    init();
   });
 
-  function init() {
+//  function init() {
 //        initColor();
     // var kamonCollection = new KamonCollection([
     //   {id:1,fileName:'kikyo.png',colorText:'#0F0F0F'},
@@ -59,14 +59,14 @@
     // var kamonCollectionView = new KamonCollectionView({collection:kamonCollection});
     // kamonCollectionView.render();
 
-    var currentKamonColor = new Color();
-    var currentBGColor = new Color({currentRed:255,currentGreen:255,currentBlue:255});
+//    var currentKamonColor = new Color();
+//    var currentBGColor = new Color({currentRed:255,currentGreen:255,currentBlue:255});
 
     // setTimeout(function(){
     //   drawKamonSample(kamonCollectionView.collection);
     // },5000);
     
-  }
+//  }
 
     // function initColor() {
     //     currentKamonColor.red   = 15;
@@ -102,25 +102,25 @@
   //   }
   // }
 
-  function changeColor(currentColor,newColor) {
-    var ctx = getCanvasContext();
-    if(ctx) {
-      // size define.
-      var size = getKamonSize();
-      var canvas_w = $('#wallpaper-sample').attr('width');
-      var canvas_h = $('#wallpaper-sample').attr('height');
+  // function changeColor(currentColor,newColor) {
+  //   var ctx = getCanvasContext();
+  //   if(ctx) {
+  //     // size define.
+  //     var size = getKamonSize();
+  //     var canvas_w = $('#wallpaper-sample').attr('width');
+  //     var canvas_h = $('#wallpaper-sample').attr('height');
 
-      // change color settings.
-      var repl = replaceColor(
-        ctx.getImageData(0,0,canvas_w,canvas_h),
-        canvas_w,
-        canvas_h,
-        currentColor,
-        newColor);
-      ctx.putImageData(repl,0,0);
-      setCurrentColor(currentColor,newColor);
-    }
-  }
+  //     // change color settings.
+  //     var repl = replaceColor(
+  //       ctx.getImageData(0,0,canvas_w,canvas_h),
+  //       canvas_w,
+  //       canvas_h,
+  //       currentColor,
+  //       newColor);
+  //     ctx.putImageData(repl,0,0);
+  //     setCurrentColor(currentColor,newColor);
+  //   }
+  // }
 
   // function getKamonSize() {
   //   var size = {};
@@ -174,77 +174,77 @@
   //   }
   // }
 
-  function putImage(ctx,image,x,y,size) {
-    ctx.putImageData(image,x,y);
-    //ctx.drawImage(image,x,y,size.w,size.h);
-    // var image = new Image();
-    // image.onload = function() {
-    //   ctx.drawImage(image,x,y,size.w,size.h);
-    // };
-    // image.src = src;
-  }
+  // function putImage(ctx,image,x,y,size) {
+  //   ctx.putImageData(image,x,y);
+  //   //ctx.drawImage(image,x,y,size.w,size.h);
+  //   // var image = new Image();
+  //   // image.onload = function() {
+  //   //   ctx.drawImage(image,x,y,size.w,size.h);
+  //   // };
+  //   // image.src = src;
+  // }
 
-    function replaceColor(imageData,canvas_w,canvas_h,currentColor,newColor) {
-        var data = imageData.data;
-        for(var x = 0;x < canvas_w;++x) {
-            for(var y = 0;y < canvas_h;++y) {
-                var index = (x + (y * canvas_h)) * 4;
-                var rgb = putColor(data,index,currentColor,newColor);
-                data[index+0] = rgb[0];
-                data[index+1] = rgb[1];
-                data[index+2] = rgb[2];
-                data[index+3] = rgb[3];
-            }
-        }
+    // function replaceColor(imageData,canvas_w,canvas_h,currentColor,newColor) {
+    //     var data = imageData.data;
+    //     for(var x = 0;x < canvas_w;++x) {
+    //         for(var y = 0;y < canvas_h;++y) {
+    //             var index = (x + (y * canvas_h)) * 4;
+    //             var rgb = putColor(data,index,currentColor,newColor);
+    //             data[index+0] = rgb[0];
+    //             data[index+1] = rgb[1];
+    //             data[index+2] = rgb[2];
+    //             data[index+3] = rgb[3];
+    //         }
+    //     }
 
-        imageData.data = data;
-        return imageData;
-    }
+    //     imageData.data = data;
+    //     return imageData;
+    // }
 
-    function putColor(data,index,currentColor,newColor) {
-        var rgb = new Array(4);
-        if(data[index+0] == currentColor.red
-            && data[index+1] == currentColor.green
-            && data[index+2] == currentColor.blue
-            && data[index+3] == 255
-            ) {
-            rgb[0] = newColor.red;
-            rgb[1] = newColor.green;
-            rgb[2] = newColor.blue;
-            rgb[3] = 255;
-        } else {
-            rgb[0] = data[index+0];
-            rgb[1] = data[index+1];
-            rgb[2] = data[index+2];
-            rgb[3] = data[index+3];
-        }
+    // function putColor(data,index,currentColor,newColor) {
+    //     var rgb = new Array(4);
+    //     if(data[index+0] == currentColor.red
+    //         && data[index+1] == currentColor.green
+    //         && data[index+2] == currentColor.blue
+    //         && data[index+3] == 255
+    //         ) {
+    //         rgb[0] = newColor.red;
+    //         rgb[1] = newColor.green;
+    //         rgb[2] = newColor.blue;
+    //         rgb[3] = 255;
+    //     } else {
+    //         rgb[0] = data[index+0];
+    //         rgb[1] = data[index+1];
+    //         rgb[2] = data[index+2];
+    //         rgb[3] = data[index+3];
+    //     }
 
-        return rgb;
-    }
+    //     return rgb;
+    // }
 
-    function parseColorParams(color) {
-        var rgb = {};
-        rgb.red   = parseInt(color.substr(1,2),16);
-        rgb.green = parseInt(color.substr(3,2),16);
-        rgb.blue  = parseInt(color.substr(5,2),16);
+    // function parseColorParams(color) {
+    //     var rgb = {};
+    //     rgb.red   = parseInt(color.substr(1,2),16);
+    //     rgb.green = parseInt(color.substr(3,2),16);
+    //     rgb.blue  = parseInt(color.substr(5,2),16);
 
-        return rgb;
-    }
+    //     return rgb;
+    // }
 
-    function setCurrentColor(currentColor,newColor) {
-        if(currentColor.red == currentKamonColor.red &&
-          currentColor.green == currentKamonColor.green &&
-          currentColor.blue == currentKamonColor.blue
-            ) {
-            currentKamonColor.red   = newColor.red;
-            currentKamonColor.green = newColor.green;
-            currentKamonColor.blue  = newColor.blue;
-        } else {
-            currentBGColor.red   = newColor.red;
-            currentBGColor.green = newColor.green;
-            currentBGColor.blue  = newColor.blue;
-        }
-    }
+    // function setCurrentColor(currentColor,newColor) {
+    //     if(currentColor.red == currentKamonColor.red &&
+    //       currentColor.green == currentKamonColor.green &&
+    //       currentColor.blue == currentKamonColor.blue
+    //         ) {
+    //         currentKamonColor.red   = newColor.red;
+    //         currentKamonColor.green = newColor.green;
+    //         currentKamonColor.blue  = newColor.blue;
+    //     } else {
+    //         currentBGColor.red   = newColor.red;
+    //         currentBGColor.green = newColor.green;
+    //         currentBGColor.blue  = newColor.blue;
+    //     }
+    // }
 
     function screenshot()
     {
