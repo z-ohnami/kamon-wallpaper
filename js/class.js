@@ -46,7 +46,7 @@ var MainView = Backbone.View.extend({
     this.bgColorPickerView.setColorValue('#98fb98');
 
     this.kamonPreviewView = new KamonPreviewView();
-
+    this.kamonPublishView = new KamonPublishView();
   },
   render:function() {
     this.kamonCollectionView.render();
@@ -329,7 +329,6 @@ var KamonSelectView = CanvasView.extend({
         ctx.drawImage(image,0,0,kamonSize.w,kamonSize.h);
         that.model.color.initColor();
         that.changeColor();
-//        that.setImageLoaded();
       };
       image.src = 'img/kamon/'+this.model.get('fileName');
     }
@@ -408,5 +407,71 @@ var KamonPreviewView = Backbone.View.extend({
     var data = url.createObjectURL(blob);
 
     $('body').css('background-image','url('+data+')');
+  }
+});
+
+var KamonPublishView = Backbone.View.extend({
+  el: '#btn-publish',
+  initialize:function() {
+    this.setInitalSize();
+    this.publishCanvasView = new PublishCanvasView();
+    this.publishCanvasView.on('loadFinished',this.save);
+  },
+  events :{
+    'click' : 'publish'
+  },
+  setInitalSize: function() {
+    $('#text-wallpaper-width').val('800');
+    $('#text-wallpaper-height').val('600');
+  },
+  getWallPaperSize:function() {
+    var size = {};
+    size.w = $('#text-wallpaper-width').val();
+    size.h = $('#text-wallpaper-height').val();
+    return size;
+  },
+  publish:function() {
+    this.publishCanvasView.drawCanvas(this.getWallPaperSize());
+  },
+  save:function() {
+    var blob = canvasToBlob(document.getElementById('publish-canvas'));
+    saveBlob(blob,'kamon-wallpaper.png');
+  }
+});
+
+var PublishCanvasView = CanvasView.extend({
+  el: '#publish-canvas',
+  drawCanvas: function(canvasSize) {
+    //get wallpaper sample
+    var kamonCtx = this.getCanvasContext('#wallpaper-sample');
+    var sample = {
+      w:$('#wallpaper-sample').attr('width'),
+      h:$('#wallpaper-sample').attr('height'),
+      image:kamonCtx.getImageData(0,0,$('#wallpaper-sample').attr('width'),$('#wallpaper-sample').attr('height'))
+    };
+
+    //get output area
+    var outputCtx = this.getCanvasContext('#publish-canvas');
+    $('#publish-canvas').attr({
+      'width':canvasSize.w,
+      'height':canvasSize.h
+    });
+
+    // calulate drawing times.
+    var times_v = Math.ceil(canvasSize.w / sample.w);
+    var times_h = Math.ceil(canvasSize.h / sample.h);
+
+    // put images.
+    var posX = 0;
+    var posY = 0;
+    for (i = 0; i < times_v; i++) {
+      for (var j = 0; j < times_h; j++) {
+        this.putImage(outputCtx,sample.image,posX,posY);
+        posX += sample.w;
+      }
+      posX = 0;
+      posY += sample.h;
+    }
+    this.trigger('loadFinished');
   }
 });

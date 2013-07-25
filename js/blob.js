@@ -50,15 +50,15 @@
   */
   function base64toBlob(_base64)
   {
-      var i;
-      var tmp = _base64.split(',');
-      var data = atob(tmp[1]);
-      var mime = tmp[0].split(':')[1].split(';')[0];
-      var buff = new ArrayBuffer(data.length);
-      var arr = new Uint8Array(buff);
-      for (i = 0; i < data.length; i++) {arr[i] = data.charCodeAt(i);}
-      var blob = new Blob([arr], { type: mime });
-      return blob;
+    var i;
+    var tmp = _base64.split(',');
+    var data = atob(tmp[1]);
+    var mime = tmp[0].split(':')[1].split(';')[0];
+    var buff = new ArrayBuffer(data.length);
+    var arr = new Uint8Array(buff);
+    for (i = 0; i < data.length; i++) {arr[i] = data.charCodeAt(i);}
+    var blob = new Blob([arr], { type: mime });
+    return blob;
   }
 
 

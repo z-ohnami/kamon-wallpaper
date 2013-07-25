@@ -246,11 +246,11 @@
     //     }
     // }
 
-    function screenshot()
-    {
-        var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
-        saveBlob(blob,'kamon-wallpaper.png');
-    }
+    // function screenshot()
+    // {
+    //     var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
+    //     saveBlob(blob,'kamon-wallpaper.png');
+    // }
 
     // function setBackgroundImage() {
     //     var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
