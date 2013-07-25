@@ -1,15 +1,15 @@
 //(function() {
   // var currentBGColor = {};
-  $('.kamon-pick').on('click',function(){
-      $('#myModal').modal('show');
-      $('#myModal').attr('called-id',$(this).attr('id'));
-  });
+  // $('.kamon-pick').on('click',function(){
+  //     $('#myModal').modal('show');
+  //     $('#myModal').attr('called-id',$(this).attr('id'));
+  // });
 
-  $('.kamon-type').on('click',function(){
-      $('#myModal').modal('hide');
-      $('#'+$('#myModal').attr('called-id')).attr('src',$(this).attr('src'));
-      drawKamonSample();
-  });
+  // $('.kamon-type').on('click',function(){
+  //     $('#myModal').modal('hide');
+  //     $('#'+$('#myModal').attr('called-id')).attr('src',$(this).attr('src'));
+  //     drawKamonSample();
+  // });
 
   // $('.kamon-edit').on('change',function(e){
   //     drawKamonSample();

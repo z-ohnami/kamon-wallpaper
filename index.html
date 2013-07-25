@@ -19,7 +19,7 @@
 
     <script type='text/template' id='kamon-select-template'>
         <td>
-            <img id='kamon-type<%- id %>' class='kamon-sample kamon-pick' src='img/kamon/<%- fileName %>' />
+            <img id='kamon-type<%- id %>' class='kamon-sample kamon-pick' src='<%- fileName %>' />
             <canvas id='kamon-canvas<%- id %>'></canvas>
             <!-- <canvas id='kamon-canvas<%- id %>' style='display:none'></canvas> -->
         </td>
@@ -27,7 +27,6 @@
             <input id='kamon-color<%- id %>' type='text' class='span2' value='<%- colorText %>' />
         </td>
     </script>
-
 </head>
 <body>
 
@@ -92,14 +91,14 @@
     </div>
 </div>
 
-<div id='myModal' class='modal hide fade' called-id='#'>
+<div id='modal-kamon-select' class='modal hide fade' called-id='#'>
     <div class='modal-header'>
         <a href='#' class='close' data-dismiss='modal'>&times;</a>
         <h3>Choose your favorite.</h3>
     </div>
     <div class='modal-body'>
-        <img src='img/kamon/kikyo.png'     class='kamon-type kamon-sample'/>
-        <img src='img/kamon/ageha-mon.png' class='kamon-type kamon-sample'/>
+        <img src='img/kamon/kikyo.png'     class='modal-kamon-type kamon-sample'/>
+        <img src='img/kamon/ageha-mon.png' class='modal-kamon-type kamon-sample'/>
     </div>
     <div class='modal-footer'></div>                                    
 </div>

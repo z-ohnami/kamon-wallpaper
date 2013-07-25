@@ -22,11 +22,11 @@ var MainView = Backbone.View.extend({
   initialize:function(){
     this.sampleView = new SampleView();
     this.kamonCollection = new KamonCollection([
-      {id:1,fileName:'kikyo.png',colorText:'#0F0F0F'},
-      {id:2,fileName:'ageha-mon.png',colorText:'#0F0F0F'},
-      {id:3,fileName:'futa-ba-rindo.png',colorText:'#000000'},
+      {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
+      {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F'},
+      {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#000000'},
 //      {id:3,fileName:'kikyo.png',colorText:'#0F0F0F'},
-      {id:4,fileName:'mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
+      {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
     ]);
 
     this.kamonSizeSelectView = new KamonSizeSelectView({model:new KamonSizeSelect()});
@@ -39,6 +39,7 @@ var MainView = Backbone.View.extend({
     this.kamonCollectionView.on('collectionLoaded',this.setupFirstBoot,this);
     this.kamonCollectionView.on('changeColor',this.drawKamonSample,this);
     this.kamonCollectionView.on('refleshFinished',this.drawKamonSample,this);
+    this.kamonCollectionView.on('showModal',this.showModal,this);
 
     this.bgColorPickerView = new ColorPickerView();
     this.bgColorPickerView.setColorPickerElement('#background-color-picker');
@@ -47,6 +48,10 @@ var MainView = Backbone.View.extend({
 
     this.kamonPreviewView = new KamonPreviewView();
     this.kamonPublishView = new KamonPublishView();
+
+    this.modalSelectView = new ModalSelectView();
+    this.modalSelectView.on('modalSelectKamonType',this.modalSelectKamonType,this);
+
   },
   render:function() {
     this.kamonCollectionView.render();
@@ -80,6 +85,15 @@ var MainView = Backbone.View.extend({
     var size = this.kamonSizeSelectView.getSize();
     var collection = this.kamonCollection;
     this.sampleView.trigger('draw',{kamonSize:size,kamonCollection:collection});
+  },
+  showModal:function(params) {
+    this.modalSelectView.show(params.id);
+  },
+  modalSelectKamonType:function(params) {
+    var size = this.kamonSizeSelectView.getSize();
+    var kamon = this.kamonCollection.get(params.id);
+    kamon.set({'fileName':params.fileName});
+    kamon.trigger('refleshKamonImage',{w:size.w,h:size.h});
   }
 });
 
@@ -274,9 +288,6 @@ var KamonSizeSelect = Backbone.Model.extend({
 
 var KamonSizeSelectView = Backbone.View.extend({
   el:'#kamon-select-size',
-  // initialize:function() {
-  //   $('#kamon-select-size').on('change',this.change);
-  // },
   events: {
     'change' : 'change'
   },
@@ -289,10 +300,29 @@ var KamonSizeSelectView = Backbone.View.extend({
   }
 });
 
+var ModalSelectView = Backbone.View.extend({
+  el:'#modal-kamon-select',
+  initialize:function() {
+    this.calledModelID = 0;
+    var that = this;
+    $('.modal-kamon-type').on('click',function(){
+      that.$el.modal('hide');
+      that.trigger('modalSelectKamonType',{id:that.calledModelID,fileName:$(this).attr('src')});
+    });
+  },
+  setKamonType:function() {
+    this.$el.modal('hide');
+  },
+  show:function(modelID) {
+    this.$el.modal('show');
+    this.calledModelID = modelID;
+  }
+});
+
 var KamonSelect = Backbone.Model.extend({
   defaults:{
     id:0,
-    fileName:'kikyo.png',
+    fileName:'img/kamon/kikyo.png',
     colorText:'#0F0F0F',
     imageLoaded:false
   },
@@ -308,13 +338,31 @@ var KamonSelectView = CanvasView.extend({
     this.model.on('setColorPickerChangeHandler',this.setColorPickerChangeHandler,this);
     this.model.on('refleshColorKamonSelect',this.changeColor,this);
     this.model.on('refleshSizeKamonSelect',this.draw,this);
+    this.model.on('refleshKamonImage',this.refleshKamonImage,this);
 
     this.colorPicker = new ColorPickerView({model: this.model.color});
     this.colorPicker.setColorPickerElement('#kamon-color'+this.model.id);
     this.colorPicker.on('changeColor',this.changeColor,this);
+
+  },
+  events: {
+    'click .kamon-pick': 'showModal'
+  },
+  template: _.template($('#kamon-select-template').html()),
+  render: function() {
+    var template = this.template(this.model.toJSON());
+    this.$el.html(template);
+    return this;
+  },
+  showModal:function() {
+    this.model.trigger('showModal',{id:this.model.id});
   },
   setColorPickerChangeHandler:function() {
     this.colorPicker.setChangeColorHandler();
+  },
+  refleshKamonImage:function(kamonSize) {
+    $('#kamon-type'+this.model.get('id')).attr('src',this.model.get('fileName'));
+    this.draw(kamonSize);
   },
   draw:function(kamonSize) {
     var ctx = this.getCanvasContext(this.canvasID);
@@ -330,7 +378,7 @@ var KamonSelectView = CanvasView.extend({
         that.model.color.initColor();
         that.changeColor();
       };
-      image.src = 'img/kamon/'+this.model.get('fileName');
+      image.src = this.model.get('fileName');
     }
   },
   changeColor:function() {
@@ -354,12 +402,6 @@ var KamonSelectView = CanvasView.extend({
   setImageLoaded: function() {
     this.model.set({'imageLoaded':true});
     this.model.trigger('imageLoaded');
-  },
-  template: _.template($('#kamon-select-template').html()),
-  render: function() {
-    var template = this.template(this.model.toJSON());
-    this.$el.html(template);
-    return this;
   }
 });
 
@@ -372,6 +414,7 @@ var KamonCollectionView = Backbone.View.extend({
   initialize: function() {
     this.collection.on('imageLoaded',this.drawCanvas,this);
     this.collection.on('changeColor',this.drawCanvas,this);
+    this.collection.on('showModal',this.showModal,this);
   },
   drawCanvas: function() {
     if(this.isSetAllCollection())
@@ -385,6 +428,9 @@ var KamonCollectionView = Backbone.View.extend({
   },
   setKamonSize: function(size) {
     this.kamonSize = size;
+  },
+  showModal:function(params) {
+    this.trigger('showModal',{id:params.id});
   },
   render: function() {
     this.collection.each(function(kamon) {
