@@ -45,6 +45,8 @@ var MainView = Backbone.View.extend({
     this.bgColorPickerView.on('changeColor',this.refleshColor,this);
     this.bgColorPickerView.setColorValue('#98fb98');
 
+    this.kamonPreviewView = new KamonPreviewView();
+
   },
   render:function() {
     this.kamonCollectionView.render();
@@ -392,5 +394,19 @@ var KamonCollectionView = Backbone.View.extend({
       kamonSelectView.draw(this.kamonSize);
     },this);
     return this;
+  }
+});
+
+var KamonPreviewView = Backbone.View.extend({
+  el: '#btn-preview',
+  events :{
+    'click' : 'setBackgroundImage'
+  },
+  setBackgroundImage:function() {
+    var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
+    var url = (window.URL || window.webkitURL);
+    var data = url.createObjectURL(blob);
+
+    $('body').css('background-image','url('+data+')');
   }
 });

@@ -15,13 +15,13 @@
   //     drawKamonSample();
   // });
 
-  $('#btn-publish').on('click',function(){
-      screenshot();
-  });
+  // $('#btn-publish').on('click',function(){
+  //     screenshot();
+  // });
 
-  $('#btn-preview').on('click',function(){
-      setBackgroundImage();
-  });
+  // $('#btn-preview').on('click',function(){
+  //     setBackgroundImage();
+  // });
 
   // $('.color-pick').colorpicker({
   //     format:'hex'
@@ -252,13 +252,13 @@
         saveBlob(blob,'kamon-wallpaper.png');
     }
 
-    function setBackgroundImage() {
-        var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
-        var url = (window.URL || window.webkitURL);
-        var data = url.createObjectURL(blob);
+    // function setBackgroundImage() {
+    //     var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
+    //     var url = (window.URL || window.webkitURL);
+    //     var data = url.createObjectURL(blob);
 
-        $('body').css('background-image','url('+data+')');
-    }
+    //     $('body').css('background-image','url('+data+')');
+    // }
 
 
 //})();
