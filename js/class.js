@@ -1,24 +1,3 @@
-/*
-  BaseView
-*/
-var BaseView = Backbone.View.extend({
-  assignedViews:{},
-  render:function() {
-    var that = this;
-    this.$el.html(this.presenter());
-    Object.keys(this.assignedViews).forEach(function(selector) {
-      that.assignedViews[selector].setElement(that.$el.find(selector)).render();
-    });
-    return this;
-  },
-  presenter:function() {
-    //default do nothing
-    return;
-  },
-  assign:function(selector,view) {
-    this.assignedViews[selector] = view;
-  }
-});
 
 var CanvasView = Backbone.View.extend({
   render:function() {
@@ -39,7 +18,7 @@ var CanvasView = Backbone.View.extend({
 /*
   MainView root for all
 */
-var MainView = BaseView.extend({
+var MainView = Backbone.View.extend({
   initialize:function(){
     this.sampleView = new SampleView();
     this.kamonCollection = new KamonCollection([
