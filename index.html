@@ -15,6 +15,15 @@
             height : 32px;            
             background-color: #FFFF00;
         }
+        .ctrl-panel {
+            padding: 4px;
+            -moz-border-radius: 5px; 
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            border: 2px #000000 solid;
+/*            background-color: #778899;*/
+            background-color: rgba(102,153,153,0.7);
+        }
     </style>
 
     <script type='text/template' id='kamon-select-template'>
@@ -32,8 +41,8 @@
 
 <div class='container'>
     <div class='row'>
-        <div class='span2'></div>
-        <div class='span8'>
+        <div class='span3'></div>
+        <div class='span6 text-center ctrl-panel'>
              <div class='row'>
                 <div class='span8'><h1>Kamon Wallpaper Generator.</h1></div>
             </div>
@@ -45,12 +54,10 @@
                 <div class='span1'></div>
             </div>
             <div class='row'>
-                <div class='span6 text-right'>
+                <div class='span6'>
                     <h2>Choose kamon style.</h2>
                     <table id='kamon-select-table' class='table'>
-                        <tr>
-                            <th>type</th><th>color</th>
-                        </tr>
+                        <tr><th>type</th><th>color</th></tr>
                         <!-- set kamon select -->
                     </table>
                 </div>
@@ -87,7 +94,7 @@
                 <div class='span2'></div>
             </div>
         </div>
-        <div class='span2'></div>
+        <div class='span3'></div>
     </div>
 </div>
 
