@@ -157,7 +157,7 @@ var SampleView = CanvasView.extend({
     var kamonTotal = kamonCollection.length;
     var kamonImageArray = [];
     for (var i = 0; i < kamonTotal; i++) {
-      var id = kamonCollection.models[i].id;
+      var id = kamonCollection.models[i].get('id');
       var kamonCtx = this.getCanvasContext('kamon-canvas'+id);
       kamonImageArray.push(kamonCtx);
     }
@@ -270,14 +270,14 @@ var KamonSelect = Backbone.Model.extend({
 var KamonSelectView = CanvasView.extend({
   tagName:'tr',
   initialize: function() {
-    this.canvasID = '#kamon-canvas'+this.model.id;
+    this.canvasID = '#kamon-canvas'+this.model.get('id');
     this.model.on('setColorPickerChangeHandler',this.setColorPickerChangeHandler,this);
     this.model.on('refleshColorKamonSelect',this.changeColor,this);
     this.model.on('refleshSizeKamonSelect',this.draw,this);
     this.model.on('refleshKamonImage',this.refleshKamonImage,this);
 
     this.colorPicker = new ColorPickerView({model: this.model.color});
-    this.colorPicker.setColorPickerElement('#kamon-color'+this.model.id);
+    this.colorPicker.setColorPickerElement('#kamon-color'+this.model.get('id'));
     this.colorPicker.on('changeColor',this.changeColor,this);
 
   },
@@ -291,7 +291,7 @@ var KamonSelectView = CanvasView.extend({
     return this;
   },
   showModal:function() {
-    this.model.trigger('showModal',{id:this.model.id});
+    this.model.trigger('showModal',{id:this.model.get('id')});
   },
   setColorPickerChangeHandler:function() {
     this.colorPicker.setChangeColorHandler();
