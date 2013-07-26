@@ -29,7 +29,7 @@ var ColorPickerView = Backbone.View.extend({
       $(this).val(color).css('background-color',color);
     });
     $(this.bindElement).colorpicker().on('hide',function(ev){
-      that.trigger('changeColor');
+//      that.trigger('changeColor');
     });
   },
   setColorValue:function(colorText) {
@@ -89,21 +89,16 @@ var Color = Backbone.Model.extend({
   },
   putColor: function(data,index,currentColor,newColor,currentBGColor,newBGColor) {
     var rgb = new Array(4);
-    if(this.isMatchColor(data,index,currentColor)) {
-      rgb[0] = newColor.red;
-      rgb[1] = newColor.green;
-      rgb[2] = newColor.blue;
-      rgb[3] = 255;
-    } else if(this.isMatchColor(data,index,currentBGColor)) {
+    if(this.isMatchColor(data,index,currentBGColor)) {
       rgb[0] = newBGColor.red;
       rgb[1] = newBGColor.green;
       rgb[2] = newBGColor.blue;
       rgb[3] = 255;
     } else {
-      rgb[0] = data[index+0];
-      rgb[1] = data[index+1];
-      rgb[2] = data[index+2];
-      rgb[3] = data[index+3];
+      rgb[0] = newColor.red;
+      rgb[1] = newColor.green;
+      rgb[2] = newColor.blue;
+      rgb[3] = 255;
     }
     return rgb;
   },
