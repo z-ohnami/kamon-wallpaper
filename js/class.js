@@ -275,6 +275,8 @@ var KamonSelectView = CanvasView.extend({
     this.model.on('refleshColorKamonSelect',this.changeColor,this);
     this.model.on('refleshSizeKamonSelect',this.draw,this);
     this.model.on('refleshKamonImage',this.refleshKamonImage,this);
+    this.model.on('hideDeleteButton',this.hideDeleteButton,this);
+    this.model.on('showDeleteButton',this.showDeleteButton,this);
 
     this.colorPicker = new ColorPickerView({model: this.model.color});
     this.colorPicker.setColorPickerElement('#kamon-color'+this.model.get('id'));
@@ -282,7 +284,8 @@ var KamonSelectView = CanvasView.extend({
 
   },
   events: {
-    'click .kamon-pick': 'showModal'
+    'click .kamon-pick': 'showModal',
+    'click .btn-kamontype-delete' : 'remove'
   },
   template: _.template($('#kamon-select-template').html()),
   render: function() {
@@ -316,6 +319,16 @@ var KamonSelectView = CanvasView.extend({
       };
       image.src = this.model.get('fileName');
     }
+  },
+  showDeleteButton: function() {
+    this.$el.find('.btn-kamontype-delete').show();
+  },
+  hideDeleteButton: function() {
+    this.$el.find('.btn-kamontype-delete').hide();
+  },
+  remove:function() {
+    this.model.trigger('removeKamonType',this.model);
+    this.$el.remove();
   },
   changeColor:function() {
     var ctx = this.getCanvasContext(this.canvasID);
@@ -364,6 +377,7 @@ var KamonCollectionView = Backbone.View.extend({
     this.collection.on('changeColor',this.drawCanvas,this);
     this.collection.on('showModal',this.showModal,this);
     this.collection.on('add',this.addNew,this);
+    this.collection.on('removeKamonType',this.removeKamonType,this);
   },
   drawCanvas: function() {
     if(this.isSetAllCollection())
@@ -385,7 +399,30 @@ var KamonCollectionView = Backbone.View.extend({
     var kamonSelectView = new KamonSelectView({model:kamon});
     this.$el.append(kamonSelectView.render().el);
     kamonSelectView.draw(this.kamonSize);
+    this.showDeleteButton();
     return this;
+  },
+  removeKamonType: function(model) {
+    this.collection.remove(model);
+    this.trigger('removeKamonType');
+    this.trigger('collectionLoaded');
+    this.hideDeleteButton();
+  },
+  hideDeleteButton:function() {
+    if(this.collection.length > 1)
+      return;
+
+    this.collection.each(function(kamon){
+      kamon.trigger('hideDeleteButton');
+    });
+  },
+  showDeleteButton:function() {
+    if(this.collection.length <= 1)
+      return;
+
+    this.collection.each(function(kamon){
+      kamon.trigger('showDeleteButton');
+    });
   },
   render: function() {
     this.collection.each(function(kamon) {

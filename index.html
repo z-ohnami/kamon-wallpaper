@@ -18,9 +18,9 @@
         .ctrl-panel {
             margin-top: 10px;
             padding: 6px;
-            -moz-border-radius: 5px; 
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
+            -moz-border-radius: 6px; 
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
             border: 2px #000000 solid;
 /*            background-color: #778899;*/
             background-color: rgba(102,153,153,0.7);
@@ -28,12 +28,15 @@
     </style>
 
     <script type='text/template' id='kamon-select-template'>
-        <td class='span3'>
+        <td class='span1'>
             <img id='kamon-type<%- id %>' class='kamon-sample kamon-pick' src='<%- fileName %>' />
             <canvas id='kamon-canvas<%- id %>' style='display:none'></canvas>
         </td>
         <td class='span3'>
             <input id='kamon-color<%- id %>' type='text' class='span2' value='<%- colorText %>' />
+        </td>
+        <td class='span2'>
+            <button class='btn-kamontype-delete btn-info'>delete</button>
         </td>
     </script>
     <script type='text/template' id='modal-image-template'>
@@ -60,7 +63,7 @@
                 <div class='span6'>
                     <h2>Choose kamon style.</h2>
                     <table id='kamon-select-table' class='table'>
-                        <tr><th>type</th><th>color</th></tr>
+                        <tr><th>type</th><th>color</th><th><!-- delete button --></th></tr>
                         <!-- set kamon select -->
                     </table>
                     <button id='btn-kamontype-add' class='text-right btn-info'>add</button>

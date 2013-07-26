@@ -32,6 +32,7 @@ var MainView = Backbone.View.extend({
     this.kamonCollectionView.on('changeColor',this.drawKamonSample,this);
     this.kamonCollectionView.on('refleshFinished',this.drawKamonSample,this);
     this.kamonCollectionView.on('showModal',this.showModal,this);
+    this.kamonCollectionView.on('removeKamonType',this.kamonAddTypeViewDisplay,this);
 
     this.bgColorPickerView = new ColorPickerView();
     this.bgColorPickerView.setColorPickerElement('#background-color-picker');
@@ -41,11 +42,6 @@ var MainView = Backbone.View.extend({
 
     this.kamonAddTypeView = new KamonAddTypeView({collection:this.kamonCollection});
     this.kamonAddTypeView.on('addKamonType',this.showModal,this);
-    // if(this.kamonCollection.isAbleAdd()) {
-    //   this.kamonAddTypeView.show();
-    // } else {
-    //   this.kamonAddTypeView.hide();
-    // }
 
     this.kamonPreviewView = new KamonPreviewView();
     this.kamonPublishView = new KamonPublishView();
@@ -95,17 +91,15 @@ var MainView = Backbone.View.extend({
       var kamonSelect = new KamonSelect({fileName:params.fileName});
       this.kamonCollection.add(kamonSelect);
       this.kamonAddTypeView.display();
-      // if(this.kamonCollection.isAbleAdd()) {
-      //   this.kamonAddTypeView.show();
-      // } else {
-      //   this.kamonAddTypeView.hide();
-      // }
     } else {
       var size = this.kamonSizeSelectView.getSize();
       var kamon = this.kamonCollection.get(params.id);
       kamon.set({'fileName':params.fileName});
       kamon.trigger('refleshKamonImage',{w:size.w,h:size.h});
     }
+  },
+  kamonAddTypeViewDisplay:function() {
+    this.kamonAddTypeView.display();
   }
 });
 
