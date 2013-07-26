@@ -27,6 +27,8 @@ var ColorPickerView = Backbone.View.extend({
     $(this.bindElement).colorpicker().on('changeColor',function(ev){
       var color = ev.color.toHex();
       $(this).val(color).css('background-color',color);
+    });
+    $(this.bindElement).colorpicker().on('hide',function(ev){
       that.trigger('changeColor');
     });
   },
@@ -81,9 +83,9 @@ var Color = Backbone.Model.extend({
         data[index+3] = rgb[3];
       }
     }
-    imageData.data = data;
+//    imageData.data = data;
     this.change(newColor,newBGColor);
-    return imageData;
+    return data;
   },
   putColor: function(data,index,currentColor,newColor,currentBGColor,newBGColor) {
     var rgb = new Array(4);
