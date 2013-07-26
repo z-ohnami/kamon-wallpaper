@@ -16,6 +16,7 @@
             background-color: #FFFF00;
         }
         .ctrl-panel {
+            margin-top: 10px;
             padding: 4px;
             -moz-border-radius: 5px; 
             -webkit-border-radius: 5px;
@@ -36,12 +37,17 @@
             <input id='kamon-color<%- id %>' type='text' class='span2' value='<%- colorText %>' />
         </td>
     </script>
+    <script type='text/template' id='modal-image-template'>
+        <img src='<%- fileName %>' class='modal-kamon-type kamon-sample'/>
+    </script>
 </head>
 <body>
 
 <div class='container'>
     <div class='row'>
+        <!-- spacer -->
         <div class='span3'></div>
+        <!-- contents -->
         <div class='span6 text-center ctrl-panel'>
              <div class='row'>
                 <div class='span8'><h1>Kamon Wallpaper Generator.</h1></div>
@@ -71,12 +77,10 @@
             </div>
             <div class='row'>
                 <div class='span2'>
-                    width:
-                    <input type='text' id='text-wallpaper-width' class='span1' />
+                    width:<input type='text' id='text-wallpaper-width' class='span1' />
                 </div>
                 <div class='span2'>
-                    height:
-                    <input type='text' id='text-wallpaper-height' class='span1' />
+                    height:<input type='text' id='text-wallpaper-height' class='span1' />
                 </div>
                 <div class='span2'>
                     <select id='kamon-select-size' class='span2 kamon-edit'>
@@ -94,6 +98,7 @@
                 <div class='span2'></div>
             </div>
         </div>
+        <!-- spacer -->
         <div class='span3'></div>
     </div>
 </div>
@@ -103,9 +108,9 @@
         <a href='#' class='close' data-dismiss='modal'>&times;</a>
         <h3>Choose your favorite.</h3>
     </div>
-    <div class='modal-body'>
-        <img src='img/kamon/kikyo.png'     class='modal-kamon-type kamon-sample'/>
-        <img src='img/kamon/ageha-mon.png' class='modal-kamon-type kamon-sample'/>
+    <div id='modal-kamon-select-body' class='modal-body'>
+<!--         <img src='img/kamon/kikyo.png'     class='modal-kamon-type kamon-sample'/>
+        <img src='img/kamon/ageha-mon.png' class='modal-kamon-type kamon-sample'/> -->
     </div>
     <div class='modal-footer'></div>                                    
 </div>

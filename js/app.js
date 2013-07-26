@@ -3,6 +3,16 @@
 */
 var MainView = Backbone.View.extend({
   initialize:function(){
+    this.kamonImageCollection = new KamonImageCollection([
+      {id:1,fileName:'img/kamon/kikyo.png'},
+      {id:2,fileName:'img/kamon/ageha-mon.png'},
+      {id:3,fileName:'img/kamon/futa-ba-rindo.png'},
+      {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png'}
+    ]);
+
+    this.modalSelectView = new ModalSelectView({collection:this.kamonImageCollection});
+    this.modalSelectView.on('modalSelectKamonType',this.modalSelectKamonType,this);
+
     this.sampleView = new SampleView();
     this.kamonCollection = new KamonCollection([
       {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
@@ -31,9 +41,6 @@ var MainView = Backbone.View.extend({
 
     this.kamonPreviewView = new KamonPreviewView();
     this.kamonPublishView = new KamonPublishView();
-
-    this.modalSelectView = new ModalSelectView();
-    this.modalSelectView.on('modalSelectKamonType',this.modalSelectKamonType,this);
 
   },
   render:function() {

@@ -16,7 +16,6 @@ var CanvasView = Backbone.View.extend({
 });
 
 var ColorPickerView = Backbone.View.extend({
-//  className: 'color-pick',
   setColorPickerElement:function(bindElement) {
     this.bindElement = bindElement;
     $(bindElement).colorpicker({
@@ -218,15 +217,32 @@ var KamonSizeSelectView = Backbone.View.extend({
   }
 });
 
+var KamonImage = Backbone.Model.extend({
+});
+
+var KamonImageCollection = Backbone.Collection.extend({
+  model: KamonImage
+});
+
 var ModalSelectView = Backbone.View.extend({
   el:'#modal-kamon-select',
   initialize:function() {
     this.calledModelID = 0;
     var that = this;
-    $('.modal-kamon-type').on('click',function(){
+    $(document).on('click','.modal-kamon-type',function(){
       that.$el.modal('hide');
       that.trigger('modalSelectKamonType',{id:that.calledModelID,fileName:$(this).attr('src')});
     });
+    this.render();
+  },
+  template: _.template($('#modal-image-template').html()),
+  render: function() {
+    var that = this;
+    this.collection.each(function(kamonImage) {
+      var template = that.template(kamonImage.toJSON());
+      $('#modal-kamon-select-body').append(template);
+    });
+    return this;
   },
   setKamonType:function() {
     this.$el.modal('hide');
