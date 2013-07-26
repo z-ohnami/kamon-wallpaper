@@ -10,6 +10,7 @@
 #       build/      # build/ ディレクトリのすべてのファイルを無視します
 #       doc/*.txt   # doc/notes.txt は無視しますが、doc/server/arch.txt は無視しません
 *.pyc
+.DS_Store
 
 # .gitignore ファイル自体は管理したい
 #       ! は、無視の打ち消し、すなわち無視しない
