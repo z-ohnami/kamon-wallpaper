@@ -18,7 +18,6 @@ var MainView = Backbone.View.extend({
       {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
       {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F'},
       {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#000000'},
-//      {id:3,fileName:'kikyo.png',colorText:'#0F0F0F'},
       {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
     ]);
 
@@ -39,6 +38,14 @@ var MainView = Backbone.View.extend({
     this.bgColorPickerView.setChangeColorHandler();
     this.bgColorPickerView.on('changeColor',this.refleshColor,this);
     this.bgColorPickerView.setColorValue('#98fb98');
+
+    this.kamonAddTypeView = new KamonAddTypeView({collection:this.kamonCollection});
+    this.kamonAddTypeView.on('addKamonType',this.showModal,this);
+    // if(this.kamonCollection.isAbleAdd()) {
+    //   this.kamonAddTypeView.show();
+    // } else {
+    //   this.kamonAddTypeView.hide();
+    // }
 
     this.kamonPreviewView = new KamonPreviewView();
     this.kamonPublishView = new KamonPublishView();
@@ -78,13 +85,27 @@ var MainView = Backbone.View.extend({
     this.sampleView.trigger('draw',{kamonSize:size,kamonCollection:collection});
   },
   showModal:function(params) {
-    this.modalSelectView.show(params.id);
+    // zero is new type
+    var id = (params !== undefined) ? params.id : 0;
+    this.modalSelectView.show(id);
   },
   modalSelectKamonType:function(params) {
-    var size = this.kamonSizeSelectView.getSize();
-    var kamon = this.kamonCollection.get(params.id);
-    kamon.set({'fileName':params.fileName});
-    kamon.trigger('refleshKamonImage',{w:size.w,h:size.h});
+    if(params.id === 0) {
+      // add new
+      var kamonSelect = new KamonSelect({fileName:params.fileName});
+      this.kamonCollection.add(kamonSelect);
+      this.kamonAddTypeView.display();
+      // if(this.kamonCollection.isAbleAdd()) {
+      //   this.kamonAddTypeView.show();
+      // } else {
+      //   this.kamonAddTypeView.hide();
+      // }
+    } else {
+      var size = this.kamonSizeSelectView.getSize();
+      var kamon = this.kamonCollection.get(params.id);
+      kamon.set({'fileName':params.fileName});
+      kamon.trigger('refleshKamonImage',{w:size.w,h:size.h});
+    }
   }
 });
 

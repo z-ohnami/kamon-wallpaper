@@ -257,12 +257,12 @@ var ModalSelectView = Backbone.View.extend({
 
 var KamonSelect = Backbone.Model.extend({
   defaults:{
-    id:0,
     fileName:'img/kamon/kikyo.png',
     colorText:'#0F0F0F',
     imageLoaded:false
   },
   initialize:function() {
+    this.set({'id':this.id});
     this.color = new Color();
   }
 });
@@ -342,7 +342,19 @@ var KamonSelectView = CanvasView.extend({
 });
 
 var KamonCollection = Backbone.Collection.extend({
-  model: KamonSelect
+  model: KamonSelect,
+  initialize:function(models) {
+    this.maxModelCnt = 4;
+    this.currentLastID = models.length;
+    this.on('add',this.updateLastID);
+  },
+  updateLastID:function(kamon) {
+    this.currentLastID += 1;
+    kamon.set({'id':this.currentLastID});
+  },
+  isAbleAdd:function() {
+    return (this.maxModelCnt > this.models.length) ? true : false;
+  }
 });
 
 var KamonCollectionView = Backbone.View.extend({
@@ -351,6 +363,7 @@ var KamonCollectionView = Backbone.View.extend({
     this.collection.on('imageLoaded',this.drawCanvas,this);
     this.collection.on('changeColor',this.drawCanvas,this);
     this.collection.on('showModal',this.showModal,this);
+    this.collection.on('add',this.addNew,this);
   },
   drawCanvas: function() {
     if(this.isSetAllCollection())
@@ -368,13 +381,37 @@ var KamonCollectionView = Backbone.View.extend({
   showModal:function(params) {
     this.trigger('showModal',{id:params.id});
   },
+  addNew: function(kamon) {
+    var kamonSelectView = new KamonSelectView({model:kamon});
+    this.$el.append(kamonSelectView.render().el);
+    kamonSelectView.draw(this.kamonSize);
+    return this;
+  },
   render: function() {
     this.collection.each(function(kamon) {
-      var kamonSelectView = new KamonSelectView({model:kamon});
-      this.$el.append(kamonSelectView.render().el);
-      kamonSelectView.draw(this.kamonSize);
+      this.addNew(kamon);
     },this);
     return this;
+  }
+});
+
+var KamonAddTypeView = Backbone.View.extend({
+  el: '#btn-kamontype-add',
+  events :{
+    'click' : 'add'
+  },
+  initialize:function() {
+    this.display();
+  },
+  add:function() {
+    this.trigger('addKamonType');
+  },
+  display: function() {
+    if(this.collection.isAbleAdd()) {
+      this.$el.show();
+    } else {
+      this.$el.hide();
+    }
   }
 });
 

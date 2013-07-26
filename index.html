@@ -28,11 +28,11 @@
     </style>
 
     <script type='text/template' id='kamon-select-template'>
-        <td>
+        <td class='span3'>
             <img id='kamon-type<%- id %>' class='kamon-sample kamon-pick' src='<%- fileName %>' />
             <canvas id='kamon-canvas<%- id %>' style='display:none'></canvas>
         </td>
-        <td>
+        <td class='span3'>
             <input id='kamon-color<%- id %>' type='text' class='span2' value='<%- colorText %>' />
         </td>
     </script>
@@ -63,6 +63,7 @@
                         <tr><th>type</th><th>color</th></tr>
                         <!-- set kamon select -->
                     </table>
+                    <button id='btn-kamontype-add' class='text-right btn-info'>add</button>
                 </div>
             </div>
             <div class='row'>
