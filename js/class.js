@@ -83,9 +83,9 @@ var Color = Backbone.Model.extend({
         data[index+3] = rgb[3];
       }
     }
-//    imageData.data = data;
+    imageData.data = data;
     this.change(newColor,newBGColor);
-    return data;
+    return imageData;
   },
   putColor: function(data,index,currentColor,newColor,currentBGColor,newBGColor) {
     var rgb = new Array(4);

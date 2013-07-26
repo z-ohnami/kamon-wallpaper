@@ -30,8 +30,7 @@
     <script type='text/template' id='kamon-select-template'>
         <td>
             <img id='kamon-type<%- id %>' class='kamon-sample kamon-pick' src='<%- fileName %>' />
-            <canvas id='kamon-canvas<%- id %>'></canvas>
-            <!-- <canvas id='kamon-canvas<%- id %>' style='display:none'></canvas> -->
+            <canvas id='kamon-canvas<%- id %>' style='display:none'></canvas>
         </td>
         <td>
             <input id='kamon-color<%- id %>' type='text' class='span2' value='<%- colorText %>' />
@@ -109,13 +108,11 @@
         <h3>Choose your favorite.</h3>
     </div>
     <div id='modal-kamon-select-body' class='modal-body'>
-<!--         <img src='img/kamon/kikyo.png'     class='modal-kamon-type kamon-sample'/>
-        <img src='img/kamon/ageha-mon.png' class='modal-kamon-type kamon-sample'/> -->
+        <!-- image list -->
     </div>
     <div class='modal-footer'></div>                                    
 </div>
 
-<!-- <canvas id='publish-canvas' ></canvas> -->
 <canvas id='publish-canvas' style='display:none'></canvas>
 
 <script src='http://code.jquery.com/jquery-1.10.2.min.js'></script>
