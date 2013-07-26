@@ -36,6 +36,7 @@ var MainView = Backbone.View.extend({
 
     this.bgColorPickerView = new ColorPickerView();
     this.bgColorPickerView.setColorPickerElement('#background-color-picker');
+    this.bgColorPickerView.setChangeColorHandler();
     this.bgColorPickerView.on('changeColor',this.refleshColor,this);
     this.bgColorPickerView.setColorValue('#98fb98');
 
