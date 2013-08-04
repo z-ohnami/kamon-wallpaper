@@ -29,7 +29,6 @@ var MainView = Backbone.View.extend({
     var size = this.kamonSizeSelectView.getSize();
     this.kamonCollectionView.setKamonSize(size);
 
-//    this.kamonCollectionView.on('collectionLoaded',this.setupFirstBoot,this);
     this.kamonCollectionView.on('collectionDrawn',this.drawKamonSample,this);
     this.kamonCollectionView.on('showModal',this.showModal,this);
     this.kamonCollectionView.on('removeKamonType',this.kamonAddTypeViewDisplay,this);
@@ -37,7 +36,7 @@ var MainView = Backbone.View.extend({
     this.bgColorPickerView = new ColorPickerView();
     this.bgColorPickerView.setColorPickerElement('#background-color-picker');
     this.bgColorPickerView.setChangeColorHandler();
-    this.bgColorPickerView.on('changeColor',this.refleshColor,this);
+//    this.bgColorPickerView.on('changeColor',this.refleshColor,this);
     this.bgColorPickerView.setColorValue('#98fb98');
 
     this.kamonAddTypeView = new KamonAddTypeView({collection:this.kamonCollection});
@@ -52,10 +51,6 @@ var MainView = Backbone.View.extend({
   render:function() {
     this.kamonCollectionView.render();
     return this;
-  },
-  setupFirstBoot:function() {
-//    this.setKamonSelectColorPicker();
-//    this.drawKamonSample();
   },
   setKamonSelectColorPicker:function() {
     for (var i = 0; i < this.kamonCollection.length; i++) {
