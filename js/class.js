@@ -28,9 +28,6 @@ var ColorPickerView = Backbone.View.extend({
       var color = ev.color.toHex();
       $(this).val(color).css('background-color',color);
     });
-    $(this.bindElement).colorpicker().on('hide',function(ev){
-//      that.trigger('changeColor');
-    });
   },
   setColorValue:function(colorText) {
     $(this.bindElement).val(colorText);
@@ -170,6 +167,7 @@ var SampleView = CanvasView.extend({
       posX = 0;
       posY += size.h;
     }
+    this.trigger('finishedDrawSample');
   }
 
 });
@@ -254,7 +252,8 @@ var KamonSelect = Backbone.Model.extend({
   defaults:{
     fileName:'img/kamon/kikyo.png',
     colorText:'#0F0F0F',
-    imageLoaded:false
+    imageLoaded:false,
+    canvasDrawn:false
   },
   initialize:function() {
     this.set({'id':this.id});
@@ -270,6 +269,7 @@ var KamonSelectView = CanvasView.extend({
     this.model.on('refleshColorKamonSelect',this.changeColor,this);
     this.model.on('refleshSizeKamonSelect',this.draw,this);
     this.model.on('refleshKamonImage',this.refleshKamonImage,this);
+
     this.model.on('hideDeleteButton',this.hideDeleteButton,this);
     this.model.on('showDeleteButton',this.showDeleteButton,this);
 
@@ -286,6 +286,11 @@ var KamonSelectView = CanvasView.extend({
   render: function() {
     var template = this.template(this.model.toJSON());
     this.$el.html(template);
+    var that = this;
+    setTimeout(function(){
+      that.setColorPickerChangeHandler();
+    },1000);
+
     return this;
   },
   showModal:function() {
@@ -315,16 +320,6 @@ var KamonSelectView = CanvasView.extend({
       image.src = this.model.get('fileName');
     }
   },
-  showDeleteButton: function() {
-    this.$el.find('.btn-kamontype-delete').show();
-  },
-  hideDeleteButton: function() {
-    this.$el.find('.btn-kamontype-delete').hide();
-  },
-  remove:function() {
-    this.model.trigger('removeKamonType',this.model);
-    this.$el.remove();
-  },
   changeColor:function() {
     var ctx = this.getCanvasContext(this.canvasID);
     if(ctx) {
@@ -339,13 +334,28 @@ var KamonSelectView = CanvasView.extend({
 
       var that = this;
       this.putImage(ctx,repl,0,0,function() {
-        that.setImageLoaded();
+//        that.setImageLoaded();
+        that.setCanvasDrawn();
       });
     }
   },
   setImageLoaded: function() {
     this.model.set({'imageLoaded':true});
     this.model.trigger('imageLoaded');
+  },
+  setCanvasDrawn: function() {
+    this.model.set({'canvasDrawn':true});
+    this.model.trigger('canvasDrawn');
+  },
+  showDeleteButton: function() {
+    this.$el.find('.btn-kamontype-delete').show();
+  },
+  hideDeleteButton: function() {
+    this.$el.find('.btn-kamontype-delete').hide();
+  },
+  remove:function() {
+    this.model.trigger('removeKamonType',this.model);
+    this.$el.remove();
   }
 });
 
@@ -368,19 +378,30 @@ var KamonCollection = Backbone.Collection.extend({
 var KamonCollectionView = Backbone.View.extend({
   el: '#kamon-select-table',
   initialize: function() {
-    this.collection.on('imageLoaded',this.drawCanvas,this);
+    this.collection.on('imageLoaded',this.notifyLoaded,this);
+    this.collection.on('canvasDrawn',this.notifyDrawn,this);
     this.collection.on('changeColor',this.drawCanvas,this);
     this.collection.on('showModal',this.showModal,this);
     this.collection.on('add',this.addNew,this);
     this.collection.on('removeKamonType',this.removeKamonType,this);
   },
-  drawCanvas: function() {
-    if(this.isSetAllCollection())
+  notifyLoaded: function() {
+    if(this.isLoadedAllCollection())
       this.trigger('collectionLoaded');
   },
-  isSetAllCollection:function() {
+  isLoadedAllCollection:function() {
     var loaded = this.collection.filter(function(kamon){
       return kamon.get('imageLoaded');
+    });
+    return (loaded.length < this.collection.length) ? false : true;
+  },
+  notifyDrawn: function() {
+    if(this.isDrawnAllCollection())
+      this.trigger('collectionDrawn');
+  },
+  isDrawnAllCollection:function() {
+    var loaded = this.collection.filter(function(kamon){
+      return kamon.get('canvasDrawn');
     });
     return (loaded.length < this.collection.length) ? false : true;
   },
@@ -450,9 +471,12 @@ var KamonAddTypeView = Backbone.View.extend({
 var KamonPreviewView = Backbone.View.extend({
   el: '#btn-preview',
   events :{
-    'click' : 'setBackgroundImage'
+    'click' : 'preview'
   },
-  setBackgroundImage:function() {
+  preview :function() {
+    this.trigger('previewWallpaper');
+  },
+  setBackgroundPreview:function() {
     var blob = canvasToBlob(document.getElementById('wallpaper-sample'));
     var url = (window.URL || window.webkitURL);
     var data = url.createObjectURL(blob);
@@ -462,7 +486,7 @@ var KamonPreviewView = Backbone.View.extend({
 });
 
 var KamonPublishView = Backbone.View.extend({
-  el: '#btn-publish',
+  el: '#btn-download',
   initialize:function() {
     this.setInitalSize();
     this.publishCanvasView = new PublishCanvasView();

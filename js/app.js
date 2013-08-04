@@ -14,6 +14,8 @@ var MainView = Backbone.View.extend({
     this.modalSelectView.on('modalSelectKamonType',this.modalSelectKamonType,this);
 
     this.sampleView = new SampleView();
+    this.sampleView.on('finishedDrawSample',this.setBackgroundPreview,this);
+
     this.kamonCollection = new KamonCollection([
       {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
       {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F'},
@@ -22,15 +24,13 @@ var MainView = Backbone.View.extend({
     ]);
 
     this.kamonSizeSelectView = new KamonSizeSelectView({model:new KamonSizeSelect()});
-    this.kamonSizeSelectView.on('changeSize',this.refleshSize,this);
 
     this.kamonCollectionView = new KamonCollectionView({collection:this.kamonCollection});
     var size = this.kamonSizeSelectView.getSize();
     this.kamonCollectionView.setKamonSize(size);
 
-    this.kamonCollectionView.on('collectionLoaded',this.setupFirstBoot,this);
-    this.kamonCollectionView.on('changeColor',this.drawKamonSample,this);
-    this.kamonCollectionView.on('refleshFinished',this.drawKamonSample,this);
+//    this.kamonCollectionView.on('collectionLoaded',this.setupFirstBoot,this);
+    this.kamonCollectionView.on('collectionDrawn',this.drawKamonSample,this);
     this.kamonCollectionView.on('showModal',this.showModal,this);
     this.kamonCollectionView.on('removeKamonType',this.kamonAddTypeViewDisplay,this);
 
@@ -44,6 +44,8 @@ var MainView = Backbone.View.extend({
     this.kamonAddTypeView.on('addKamonType',this.showModal,this);
 
     this.kamonPreviewView = new KamonPreviewView();
+    this.kamonPreviewView.on('previewWallpaper',this.refleshSize,this);
+
     this.kamonPublishView = new KamonPublishView();
 
   },
@@ -52,8 +54,8 @@ var MainView = Backbone.View.extend({
     return this;
   },
   setupFirstBoot:function() {
-    this.setKamonSelectColorPicker();
-    this.drawKamonSample();
+//    this.setKamonSelectColorPicker();
+//    this.drawKamonSample();
   },
   setKamonSelectColorPicker:function() {
     for (var i = 0; i < this.kamonCollection.length; i++) {
@@ -71,7 +73,7 @@ var MainView = Backbone.View.extend({
     this.kamonCollectionView.setKamonSize(size);
 
     for (var i = 0; i < this.kamonCollection.length; i++) {
-      this.kamonCollection.at(i).set({'imageLoaded':false});
+      this.kamonCollection.at(i).set({'canvasDrawn':false});
       this.kamonCollection.at(i).trigger('refleshSizeKamonSelect',{w:size.w,h:size.h});
     }
   },
@@ -100,6 +102,9 @@ var MainView = Backbone.View.extend({
   },
   kamonAddTypeViewDisplay:function() {
     this.kamonAddTypeView.display();
+  },
+  setBackgroundPreview:function() {
+    this.kamonPreviewView.setBackgroundPreview();
   }
 });
 
