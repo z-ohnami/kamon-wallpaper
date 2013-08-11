@@ -14,20 +14,20 @@ var MainModel = Backbone.Model.extend({
     this.sampleList = [
       // sample 1
       {kamons:[
-          {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
-          {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F'},
-          {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#000000'},
-          {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
+          {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F',imageLoaded:false},
+          {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F',imageLoaded:false},
+          {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#000000',imageLoaded:false},
+          {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#0F0F0F',imageLoaded:false}
         ],
         bgColorText:'#98fb98',
         kamonSize:this.mstKamonSizeList.SMALL
       },
       // sample 2
       {kamons:[
-          {id:1,fileName:'img/kamon/kikyo.png',colorText:'#443355'},
-          {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#443355'},
-          {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#443355'},
-          {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#443355'}
+          {id:1,fileName:'img/kamon/kikyo.png',colorText:'#443355',imageLoaded:false},
+          {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#443355',imageLoaded:false},
+          {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#443355',imageLoaded:false},
+          {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#443355',imageLoaded:false}
         ],
         bgColorText:'#889977',
         kamonSize:this.mstKamonSizeList.MEDIUM

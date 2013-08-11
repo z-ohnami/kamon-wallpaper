@@ -16,6 +16,13 @@ var CanvasView = Backbone.View.extend({
 });
 
 var ColorPickerView = Backbone.View.extend({
+  // className: 'color-picker',
+  // events: {
+  //   'change':'change'
+  // },
+  // change:function() {
+  //     $(this).css('background-color',$(this).val());
+  // },
   setColorPickerElement:function(bindElement) {
     this.bindElement = bindElement;
     $(bindElement).colorpicker({
@@ -250,7 +257,7 @@ var KamonSelect = Backbone.Model.extend({
   defaults:{
     fileName:'img/kamon/kikyo.png',
     colorText:'#0F0F0F',
-    imageLoaded:false,
+    imageLoaded:true,
     canvasDrawn:false
   },
   initialize:function() {
@@ -300,6 +307,13 @@ var KamonSelectView = CanvasView.extend({
   refleshKamonImage:function(kamonSize) {
     $('#kamon-type'+this.model.get('id')).attr('src',this.model.get('fileName'));
 //    this.draw(kamonSize);
+  },
+  initalizeDraw:function(kamonSize) {
+    if(this.model.get('imageLoaded') === true)
+      return;
+
+    this.model.set('imageLoaded',true);
+    this.draw(kamonSize);
   },
   draw:function(kamonSize) {
     var ctx = this.getCanvasContext(this.canvasID);
@@ -411,6 +425,7 @@ var KamonCollectionView = Backbone.View.extend({
   addNew: function(kamon) {
     var kamonSelectView = new KamonSelectView({model:kamon});
     this.$el.append(kamonSelectView.render().el);
+    kamonSelectView.initalizeDraw(this.kamonSize);
 //    kamonSelectView.draw(this.kamonSize);
     this.showDeleteButton();
     return this;
