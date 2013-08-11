@@ -1,31 +1,67 @@
+var MainModel = Backbone.Model.extend({
+  initialize:function() {
+    this.mstKamonSizeList = {
+      SMALL:1,
+      MEDIUM:2,
+      LARGE:3
+    };
+    this.mstKamonImageList = [
+      {id:1,fileName:'img/kamon/kikyo.png'},
+      {id:2,fileName:'img/kamon/ageha-mon.png'},
+      {id:3,fileName:'img/kamon/futa-ba-rindo.png'},
+      {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png'}
+    ];
+    this.sampleList = [
+      // sample 1
+      {kamons:[
+          {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
+          {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F'},
+          {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#000000'},
+          {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
+        ],
+        bgColorText:'#98fb98',
+        kamonSize:this.mstKamonSizeList.SMALL
+      },
+      // sample 2
+      {kamons:[
+          {id:1,fileName:'img/kamon/kikyo.png',colorText:'#443355'},
+          {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#443355'},
+          {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#443355'},
+          {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#443355'}
+        ],
+        bgColorText:'#889977',
+        kamonSize:this.mstKamonSizeList.MEDIUM
+      }
+    ];
+  },
+  getSample:function() {
+    return this.sampleList[this.randomRange(0,((this.sampleList.length - 1)))];
+  },
+  randomRange:function(from,to) {
+    return from + Math.floor(Math.random() * (to + 1));
+  }
+});
+
 /*
   MainView root for all
 */
 var MainView = Backbone.View.extend({
   initialize:function(){
-    this.kamonImageCollection = new KamonImageCollection([
-      {id:1,fileName:'img/kamon/kikyo.png'},
-      {id:2,fileName:'img/kamon/ageha-mon.png'},
-      {id:3,fileName:'img/kamon/futa-ba-rindo.png'},
-      {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png'}
-    ]);
+    this.kamonImageCollection = new KamonImageCollection(this.model.mstKamonImageList);
 
     this.modalSelectView = new ModalSelectView({collection:this.kamonImageCollection});
     this.modalSelectView.on('modalSelectKamonType',this.modalSelectKamonType,this);
 
     this.sampleView = new SampleView();
     this.sampleView.on('finishedDrawSample',this.setBackgroundPreview,this);
+    var sampleKamon = this.model.getSample();
 
-    this.kamonCollection = new KamonCollection([
-      {id:1,fileName:'img/kamon/kikyo.png',colorText:'#0F0F0F'},
-      {id:2,fileName:'img/kamon/ageha-mon.png',colorText:'#0F0F0F'},
-      {id:3,fileName:'img/kamon/futa-ba-rindo.png',colorText:'#000000'},
-      {id:4,fileName:'img/kamon/mutu-nen-sen-mon.png',colorText:'#0F0F0F'}
-    ]);
-
-    this.kamonSizeSelectView = new KamonSizeSelectView({model:new KamonSizeSelect()});
-
+    this.kamonCollection = new KamonCollection(sampleKamon.kamons);
     this.kamonCollectionView = new KamonCollectionView({collection:this.kamonCollection});
+
+    this.kamonSizeSelectView = new KamonSizeSelectView({model:new KamonSizeSelect({sizeList:this.model.mstKamonSizeList})});
+
+    this.kamonSizeSelectView.setSize(sampleKamon.kamonSize);
     var size = this.kamonSizeSelectView.getSize();
     this.kamonCollectionView.setKamonSize(size);
 
@@ -36,8 +72,7 @@ var MainView = Backbone.View.extend({
     this.bgColorPickerView = new ColorPickerView();
     this.bgColorPickerView.setColorPickerElement('#background-color-picker');
     this.bgColorPickerView.setChangeColorHandler();
-//    this.bgColorPickerView.on('changeColor',this.refleshColor,this);
-    this.bgColorPickerView.setColorValue('#98fb98');
+    this.bgColorPickerView.setColorValue(sampleKamon.bgColorText);
 
     this.kamonAddTypeView = new KamonAddTypeView({collection:this.kamonCollection});
     this.kamonAddTypeView.on('addKamonType',this.showModal,this);
@@ -105,7 +140,7 @@ var MainView = Backbone.View.extend({
 
 $(function(){
   // initialize application
-  var appView = new MainView();
+  var appView = new MainView({model:new MainModel()});
   appView.render();
 });
 

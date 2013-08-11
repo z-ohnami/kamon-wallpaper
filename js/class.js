@@ -173,28 +173,24 @@ var SampleView = CanvasView.extend({
 });
 
 var KamonSizeSelect = Backbone.Model.extend({
-  initialize:function() {
-    this.SMALL  = 1;
-    this.MEDIUM = 2;
-    this.LARGE  = 3;
-  },
   getSize: function(selected) {
+    var sizeList = this.get('sizeList');
     var size = {};
     switch(selected) {
-      case this.SMALL:
+      case sizeList.SMALL:
         size.w = 40;
         size.h = 40;
         break;
-      case this.MEDIUM:
+      case sizeList.MEDIUM:
         size.w = 80;
         size.h = 80;
         break;
-      case this.LARGE:
+      case sizeList.LARGE:
         size.w = 160;
         size.h = 160;
         break;
     }
-    return size;    
+    return size;
   }
 });
 
@@ -209,6 +205,9 @@ var KamonSizeSelectView = Backbone.View.extend({
   getSize: function() {
     var selected = parseInt($('#kamon-select-size').val());
     return this.model.getSize(selected);
+  },
+  setSize: function(size) {
+    $('#kamon-select-size').val(size);
   }
 });
 
