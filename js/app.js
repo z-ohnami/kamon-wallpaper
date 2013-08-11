@@ -119,11 +119,12 @@ var MainView = Backbone.View.extend({
   },
   modalSelectKamonType:function(params) {
     if(params.id === 0) {
-      // add new
+      // add new kamon pattern
       var kamonSelect = new KamonSelect({fileName:params.fileName});
       this.kamonCollection.add(kamonSelect);
       this.kamonAddTypeView.display();
     } else {
+      //change kamon pattern
       var size = this.kamonSizeSelectView.getSize();
       var kamon = this.kamonCollection.get(params.id);
       kamon.set({'fileName':params.fileName});

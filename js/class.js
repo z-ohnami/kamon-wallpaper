@@ -46,7 +46,6 @@ var Color = Backbone.Model.extend({
     this.initColor();
   },
   initColor:function() {
-//    this.currentColor = {red:15,green:15,blue:15};
     this.currentColor = {red:0,green:0,blue:0};
     this.currentBGColor = {red:255,green:255,blue:255};
   },
@@ -300,7 +299,7 @@ var KamonSelectView = CanvasView.extend({
   },
   refleshKamonImage:function(kamonSize) {
     $('#kamon-type'+this.model.get('id')).attr('src',this.model.get('fileName'));
-    this.draw(kamonSize);
+//    this.draw(kamonSize);
   },
   draw:function(kamonSize) {
     var ctx = this.getCanvasContext(this.canvasID);
@@ -333,7 +332,6 @@ var KamonSelectView = CanvasView.extend({
 
       var that = this;
       this.putImage(ctx,repl,0,0,function() {
-//        that.setImageLoaded();
         that.setCanvasDrawn();
       });
     }
@@ -413,14 +411,13 @@ var KamonCollectionView = Backbone.View.extend({
   addNew: function(kamon) {
     var kamonSelectView = new KamonSelectView({model:kamon});
     this.$el.append(kamonSelectView.render().el);
-    kamonSelectView.draw(this.kamonSize);
+//    kamonSelectView.draw(this.kamonSize);
     this.showDeleteButton();
     return this;
   },
   removeKamonType: function(model) {
     this.collection.remove(model);
     this.trigger('removeKamonType');
-    this.trigger('collectionLoaded');
     this.hideDeleteButton();
   },
   hideDeleteButton:function() {
